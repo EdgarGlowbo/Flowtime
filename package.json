@@ -1,0 +1,33 @@
+{
+  "name": "flowtime",
+  "version": "1.0.0",
+  "description": "productivity app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EdgarGlowbo/Flowtime.git"
+  },
+  "keywords": [
+    "productivity"
+  ],
+  "author": "Edgar Quiñonez",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EdgarGlowbo/Flowtime/issues"
+  },
+  "homepage": "https://github.com/EdgarGlowbo/Flowtime#readme",
+  "dependencies": {
+    "webpack-cli": "^4.9.2"
+  },
+  "devDependencies": {
+    "css-loader": "^6.6.0",
+    "sass": "^1.49.7",
+    "sass-loader": "^12.4.0",
+    "style-loader": "^3.3.1",
+    "webpack": "^5.68.0"
+  }
+}
