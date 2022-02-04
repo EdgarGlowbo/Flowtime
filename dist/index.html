@@ -6,6 +6,56 @@
   <title>Flowtime</title>
 </head>
 <body>
+  <div class="l-container">
+    <div class="l-container__tasks">
+
+      <div class="m-task">
+        <div class="o-task__display">
+          <span class="c-task__name c-text__span js-task__name">Task Name</span>
+          <button class="c-task__btn c-task__btn--is-active c-btn js-btn">Stop</button>
+          <span class="c-task__count-up c-task__count-up--is-active c-text__span">00:00</span>
+        </div>
+        <div class="o-task__dropdown">
+          <div class="o-task__start-time">
+            <span class="c-task__label c-text__span">Start time:</span>
+            <input type="text" value="" class="c-task__start-time c-input-field" readonly="readonly">            
+          </div>
+          <div class="o-task__stop-time">
+            <span class="c-task__label c-text__span">Stop time:</span>
+            <input type="text" value="" class="c-task__stop-time c-input-field" readonly="readonly">            
+          </div>
+          <button class="c-task__btn c-category-btn c-btn">Category</button>
+        </div>
+        <div class="c-task__dropdown-arrow c-task__dropdown-arrow--dropdown-shown">
+          <img src="../assets/angulo-pequeno-hacia-arriba.svg" alt="Arrow pointing up" class="c-task__icon-arrow-up">
+        </div>
+      </div>
+
+      <div class="m-task">
+        <div class="o-task__display">
+          <span class="c-task__name c-text__span js-task__name">Task Name</span>
+          <button class="c-task__btn c-task__btn--is-unactive c-btn js-btn">Start</button>
+          <span class="c-task__count-up c-task__count-up--is-unactive c-text__span">00:00</span>
+        </div> 
+        <div class="o-task__dropdown">
+          <div class="o-task__start-time">
+            <span class="c-task__label c-text__span">Start time:</span>
+            <input type="text" value="" class="c-task__start-time c-input-field" readonly="readonly">            
+          </div>
+          <div class="o-task__stop-time">
+            <span class="c-task__label c-text__span">Stop time:</span>
+            <input type="text" value="" class="c-task__stop-time c-input-field" readonly="readonly">            
+          </div>
+          <button class="c-task__btn c-category-btn c-btn">Category</button>
+        </div>
+        <div class="c-task__dropdown-arrow c-task__dropdown-arrow--dropdown-hidden">
+          <img src="../assets/angulo-pequeno-hacia-abajo.svg" alt="Arrow pointing down" class="c-task__icon-arrow-down">
+        </div>
+      </div>      
+    </div>
+    <button class="c-add-task">+</button>
+    
+  </div>
   <script src="bundle.js"></script>
 </body>
 </html>

@@ -1,0 +1,54 @@
+@use './variables' as *;
+.l-container {
+  height: $container-height;
+  width: $container-width;
+  margin: 0px auto;
+}
+.l-container__tasks {
+  height: $task-container-height;
+  width: $task-container-width;
+  margin: 0px $task-container-margin;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.m-task {
+  height: $task-height;
+  width: $task-width;
+  margin: $task-margin;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.o-task__display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 5px;
+}
+.c-task__name {
+  flex-basis: 60%;
+}
+.o-task__dropdown {
+  display: flex;
+  margin: 5px;
+}
+.o-task__start-time, .o-task__stop-time {
+  display: flex;
+  flex-basis: content;
+  align-items: center;
+}
+.c-input-field {
+  width: 50%;
+}
+.c-category-btn {
+  flex-basis: 30%;
+}
+.c-task__dropdown-arrow {
+  flex-basis: 15%;
+  height: 15%;
+  text-align: center;
+}
+.c-task__icon-arrow-up, .c-task__icon-arrow-down {
+  height:  $arrow-up-height;
+}

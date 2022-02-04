@@ -1,0 +1,15 @@
+@use './variables' as *;
+.c-text__span, button, input{
+  font-size: 1em;
+  font-family: Arial, Helvetica, sans-serif;
+  color: $font-primary;
+}
+.c-task__label {
+  font-size: 0.7em;
+}
+.c-btn {
+  font-size: 0.9em;
+}
+.c-category-btn {
+  color: $font-secondary;
+}

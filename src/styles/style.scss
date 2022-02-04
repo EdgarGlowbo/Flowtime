@@ -1,1 +1,29 @@
-$body-color: red;
+@use './variables' as *;
+@use './fonts';
+@use './layout';
+.l-container {
+  background-color: $body-color;
+}
+.m-task {
+  background-color: $elements-main-color;
+  border-radius: 5px;
+}
+.c-btn {
+  border-radius: 5px;
+  border: 0;
+  cursor: pointer;
+}
+.c-input-field {
+  border-radius: 8px;
+}
+.c-task__btn--is-active {
+  background-color: $btn-secondary;
+}
+.c-task__btn--is-unactive {
+  background-color: $btn-primary;
+}
+.c-task__dropdown-arrow {
+  background-color: $elements-secondary-color;
+  border-radius: 0px 0px 5px 5px;
+  cursor: pointer;
+}

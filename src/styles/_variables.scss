@@ -1,0 +1,25 @@
+// Colors
+$body-color: #ebf0f2;
+$btn-primary: #05d7a0;
+$btn-secondary: #f06e4b;
+$font-primary: #f5f5ff;
+$font-secondary:#283241;
+$elements-main-color: #894b5d;
+$elements-secondary-color: #a0838f;
+
+// dimensions
+  // Container
+  $container-height: 740px;
+  $container-width: 360px;
+
+  // Task container and tasks
+  $task-container-margin: 10px;
+  $task-container-height: $container-height - ($task-container-margin * 2);
+  $task-container-width: $container-width - ($task-container-margin * 2);
+
+  $task-margin: 5px;
+  $task-height: auto;  
+  $task-width: $task-container-width - ($task-margin * 2);
+
+  // Icons size
+  $arrow-up-height: 10px;
