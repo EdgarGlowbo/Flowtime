@@ -51,9 +51,25 @@
         <div class="c-task__dropdown-arrow c-task__dropdown-arrow--dropdown-hidden">
           <img src="../assets/angulo-pequeno-hacia-abajo.svg" alt="Arrow pointing down" class="c-task__icon-arrow-down">
         </div>
+      </div>
+      <div class="m-setup-wdw js-setup-wdw--display">
+        <div class="o-setup-wdw__input-container">
+          <span class="c-text-span m-setup-wdw__name">Name:</span>
+          <input type="text" class="c-input-field c-setup-wdw__input-name">
+          <span class="c-text-span m-setup-wdw__category">Category:</span>
+          <input type="text" class="c-input-field c-setup-wdw__input-category">
+        </div>
+        <div class="o-setup-wdw__slidecontainer">
+          <input type="range" min="1" max="5" value="4" class="m-setup-wdw__slider">
+          <span class="c-text-span "></span>
+        </div>
+        <div class="o-setup-wdw__btn-container">
+          <button class="c-setup-wdw__btn-ok c-setup-wdw__btn">Ok</button>
+          <button class="c-setup-wdw__btn-cancel c-setup-wdw__btn">Cancel</button>
+        </div>        
       </div>      
     </div>
-    <button class="c-add-task">+</button>
+    <button class="c-add-task-btn js-add-task-btn"><img src="../assets/anadir.svg" alt="Signo de añadir" class="c-add-task-img"></button>
     
   </div>
   <script src="bundle.js"></script>

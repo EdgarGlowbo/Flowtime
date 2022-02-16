@@ -27,3 +27,12 @@
   border-radius: 0px 0px 5px 5px;
   cursor: pointer;
 }
+.c-add-task-btn {
+  background-color: $add-task-btn-color;
+  border-radius: 18px;
+  border: none;
+  cursor: pointer;
+}
+.o-setup-wdw__btn-container {
+  background-color: $body-color;
+}

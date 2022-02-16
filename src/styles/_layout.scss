@@ -3,6 +3,7 @@
   height: $container-height;
   width: $container-width;
   margin: 0px auto;
+  position: relative;
 }
 .l-container__tasks {
   height: $task-container-height;
@@ -51,4 +52,18 @@
 }
 .c-task__icon-arrow-up, .c-task__icon-arrow-down {
   height:  $arrow-up-height;
+}
+.c-add-task-btn {
+  position: sticky;
+  display: flex;
+  height: 32px;
+  width: 32px;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  bottom: 20px;
+}
+.c-add-task-img {
+  height: 32px;
+  width: 32px;
 }
