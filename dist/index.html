@@ -6,8 +6,8 @@
   <title>Flowtime</title>
 </head>
 <body>
-  <div class="l-container">
-    <div class="l-container__tasks">
+  <div class="l-container l-container--setup-wdw-displayed">
+    <div class="l-container__tasks l-container__tasks--setup-wdw-displayed">
 
       <div class="m-task">
         <div class="o-task__display">
@@ -52,20 +52,21 @@
           <img src="../assets/angulo-pequeno-hacia-abajo.svg" alt="Arrow pointing down" class="c-task__icon-arrow-down">
         </div>
       </div>
-      <div class="m-setup-wdw js-setup-wdw--display">
-        <div class="o-setup-wdw__input-container">
-          <span class="c-text-span m-setup-wdw__name">Name:</span>
-          <input type="text" class="c-input-field c-setup-wdw__input-name">
-          <span class="c-text-span m-setup-wdw__category">Category:</span>
-          <input type="text" class="c-input-field c-setup-wdw__input-category">
+      <div class="m-setup-wdw">
+        <div class="o-setup-wdw__input-container flex-center">
+          <span class="c-text__span c-setup-wdw__name c-text__span--font-color-secondary c-label">Name:</span>
+          <input type="text" class="c-input-field c-input-field--border-solid c-setup-wdw__input-name c-input-field--font-color-secondary">
+          <span class="c-text__span c-setup-wdw__category c-text__span--font-color-secondary c-label">Category:</span>
+          <input type="text" class="c-input-field c-input-field--border-solid c-setup-wdw__input-category c-input-field--font-color-secondary">
         </div>
-        <div class="o-setup-wdw__slidecontainer">
-          <input type="range" min="1" max="5" value="4" class="m-setup-wdw__slider">
-          <span class="c-text-span "></span>
+        <div class="o-setup-wdw__slidecontainer flex-center">
+          <span class="c-text__span c-text__span--font-color-secondary c-label">Break setup:</span>    
+          <input type="range" min="2" max="5" value="4" class="c-setup-wdw__slider">
+          <span class="c-text__span c-setup-wdw__break-duration-text c-text__span--font-color-secondary">Medium</span>
         </div>
         <div class="o-setup-wdw__btn-container">
-          <button class="c-setup-wdw__btn-ok c-setup-wdw__btn">Ok</button>
-          <button class="c-setup-wdw__btn-cancel c-setup-wdw__btn">Cancel</button>
+          <button class="c-setup-wdw__btn-ok c-setup-wdw__btn c-btn c-btn--font-color-secondary">Ok</button>
+          <button class="c-setup-wdw__btn-cancel c-setup-wdw__btn c-btn c-btn--font-color-secondary">Cancel</button>
         </div>        
       </div>      
     </div>

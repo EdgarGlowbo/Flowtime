@@ -15,6 +15,7 @@
 }
 .c-input-field {
   border-radius: 8px;
+  border: none;
 }
 .c-task__btn--is-active {
   background-color: $btn-secondary;
@@ -33,6 +34,27 @@
   border: none;
   cursor: pointer;
 }
-.o-setup-wdw__btn-container {
+.m-setup-wdw {
   background-color: $body-color;
+  border: solid 0.5px;
+  border-radius: 5px;
+}
+.c-input-field--border-solid {
+  border: 1px solid;
+}
+.c-label, .c-task__label {
+  padding: 3px;
+}
+.c-setup-wdw__input-name, .c-setup-wdw__input-category {
+  width: 70%;
+}
+.c-setup-wdw__break-duration-text {
+  padding: 5px;
+}
+.c-setup-wdw__btn {
+  padding: 5px 20%;
+}
+.c-setup-wdw__btn-cancel{
+  border-left: 1px solid;
+  border-radius: 0px;
 }
