@@ -2,9 +2,20 @@
 const taskContainer = document.querySelector('.l-container__tasks');
 const addTaskBtn = document.querySelector('.c-add-task-btn');
 const setupTaskWdw = document.querySelector('.m-setup-wdw');
+const breakSlider = document.querySelector('#taskBreak');
 
-taskContainer.addEventListener('click', e => {
-  e.stopPropagation();
+const hideSetupWdw = target => {
+   // Hides setupTask Window
+  // If setupwdw doesn't have that class then it adds that class
+  if (!setupTaskWdw.classList.contains('m-setup-wdw--display-none')) {
+    // Checks for buttons or task container classes
+    if (target.contains('c-setup-wdw__btn') || target.contains('l-container__tasks')) {
+      setupTaskWdw.classList.add('m-setup-wdw--display-none');
+    }
+  }
+}
+
+taskContainer.addEventListener('click', e => {  
   const elementClassList = e.target.classList;
 
 
@@ -24,14 +35,6 @@ taskContainer.addEventListener('click', e => {
     }
   }
 
-  // Hides setupTask Window
-  // If setupwdw doesn't have that class then it adds that class
-  if (!setupTaskWdw.classList.contains('m-setup-wdw--display-none')) {
-    // Checks for buttons or task container classes
-    if (elementClassList.contains('c-setup-wdw__btn') || elementClassList.contains('l-container__tasks')) {
-      setupTaskWdw.classList.add('m-setup-wdw--display-none');
-    }
-  }
   
   // Switch stop/start buttons
   if (elementClassList.contains('c-task__btn--is-active')) {
@@ -44,14 +47,6 @@ taskContainer.addEventListener('click', e => {
     e.target.textContent = 'Stop';
   }
 
-  // Changes dropdown button arrow direction
-  if (elementClassList.contains('c-task__dropdown-arrow')) {
-    if (elementClassList.contains('c-task__dropdown-arrow--dropdown-hidden')) {
-      
-
-    }
-
-  }
 });
 
 // Show setupTask window
@@ -61,4 +56,3 @@ addTaskBtn.addEventListener('click', e => {
     setupTaskWdw.classList.remove('m-setup-wdw--display-none');
   }
 });
-

@@ -7,73 +7,28 @@
 </head>
 <body>
   <div class="l-container l-container--setup-wdw-displayed">
-    <div class="l-container__tasks l-container__tasks--setup-wdw-displayed">
-
-      <div class="m-task">
-        <div class="o-task__display">
-          <span class="c-task__name c-text__span js-task__name">Task Name</span>
-          <button class="c-task__btn c-task__btn--is-active c-btn js-btn">Stop</button>
-          <span class="c-task__count-up c-task__count-up--is-active c-text__span">00:00</span>
-        </div>
-        <div class="o-task__dropdown">
-          <div class="o-task__start-time">
-            <span class="c-task__label c-text__span">Start time:</span>
-            <input type="text" value="" class="c-task__start-time c-input-field" readonly="readonly">            
-          </div>
-          <div class="o-task__stop-time">
-            <span class="c-task__label c-text__span">Stop time:</span>
-            <input type="text" value="" class="c-task__stop-time c-input-field" readonly="readonly">            
-          </div>
-          <button class="c-task__btn c-category-btn c-btn">Category</button>
-        </div>
-        <div class="c-task__dropdown-arrow">
-          <img src="../assets/angulo-pequeno-hacia-arriba.svg" alt="Arrow pointing up" class="c-task__icon-arrow-up c-task__dropdown-arrow">
-        </div>
+    <div class="l-container__tasks l-container__tasks--setup-wdw-displayed"></div>
+    <div class="m-setup-wdw m-setup-wdw--display-none">
+      <div class="o-setup-wdw__input-container flex-center">
+        <span class="c-text__span c-setup-wdw__name c-text__span--font-color-secondary c-label">Name:</span>
+        <input type="text" class="c-input-field c-input-field--border-solid c-setup-wdw__input-name c-input-field--font-color-secondary" id="taskName">
+        <span class="c-text__span c-setup-wdw__category c-text__span--font-color-secondary c-label">Category:</span>
+        <input type="text" class="c-input-field c-input-field--border-solid c-setup-wdw__input-category c-input-field--font-color-secondary" id="taskCategory">
       </div>
-
-      <div class="m-task">
-        <div class="o-task__display">
-          <span class="c-task__name c-text__span js-task__name">Task Name</span>
-          <button class="c-task__btn c-task__btn--is-unactive c-btn js-btn">Start</button>
-          <span class="c-task__count-up c-task__count-up--is-unactive c-text__span">00:00</span>
-        </div> 
-        <div class="o-task__dropdown o-task__dropdown--hidden">
-          <div class="o-task__start-time">
-            <span class="c-task__label c-text__span">Start time:</span>
-            <input type="text" value="" class="c-task__start-time c-input-field" readonly="readonly">            
-          </div>
-          <div class="o-task__stop-time">
-            <span class="c-task__label c-text__span">Stop time:</span>
-            <input type="text" value="" class="c-task__stop-time c-input-field" readonly="readonly">            
-          </div>
-          <button class="c-task__btn c-category-btn c-btn">Category</button>
-        </div>
-        <div class="c-task__dropdown-arrow c-task__dropdown-arrow--dropdown-hidden">
-          <img src="../assets/angulo-pequeno-hacia-abajo.svg" alt="Arrow pointing down" class="c-task__icon-arrow-down c-task__dropdown-arrow">
-        </div>
+      <div class="o-setup-wdw__slidecontainer flex-center">
+        <span class="c-text__span c-text__span--font-color-secondary c-label">Break setup:</span>    
+        <input type="range" min="2" max="5" value="4" class="c-setup-wdw__slider" id="taskBreak">
+        <span class="c-text__span c-setup-wdw__break-duration-text c-text__span--font-color-secondary">Medium</span>
       </div>
-      <div class="m-setup-wdw m-setup-wdw--display-none">
-        <div class="o-setup-wdw__input-container flex-center">
-          <span class="c-text__span c-setup-wdw__name c-text__span--font-color-secondary c-label">Name:</span>
-          <input type="text" class="c-input-field c-input-field--border-solid c-setup-wdw__input-name c-input-field--font-color-secondary">
-          <span class="c-text__span c-setup-wdw__category c-text__span--font-color-secondary c-label">Category:</span>
-          <input type="text" class="c-input-field c-input-field--border-solid c-setup-wdw__input-category c-input-field--font-color-secondary">
-        </div>
-        <div class="o-setup-wdw__slidecontainer flex-center">
-          <span class="c-text__span c-text__span--font-color-secondary c-label">Break setup:</span>    
-          <input type="range" min="2" max="5" value="4" class="c-setup-wdw__slider">
-          <span class="c-text__span c-setup-wdw__break-duration-text c-text__span--font-color-secondary">Medium</span>
-        </div>
-        <div class="o-setup-wdw__btn-container">
-          <button class="c-setup-wdw__btn-ok c-setup-wdw__btn c-btn c-btn--font-color-secondary">Ok</button>
-          <button class="c-setup-wdw__btn-cancel c-setup-wdw__btn c-btn c-btn--font-color-secondary">Cancel</button>
-        </div>        
-      </div>      
-    </div>
+      <div class="o-setup-wdw__btn-container">
+        <button class="c-setup-wdw__btn-ok c-setup-wdw__btn c-btn c-btn--font-color-secondary">Ok</button>
+        <button class="c-setup-wdw__btn-cancel c-setup-wdw__btn c-btn c-btn--font-color-secondary">Cancel</button>
+      </div>        
+    </div> 
     <button class="c-add-task-btn js-add-task-btn"><img src="../assets/anadir.svg" alt="Signo de añadir" class="c-add-task-img js-add-task-btn"></button>
     
   </div>
-  <script src="bundle.js"></script>
   <script src="app.js"></script>
+  <script src="bundle.js"></script>  
 </body>
 </html>
