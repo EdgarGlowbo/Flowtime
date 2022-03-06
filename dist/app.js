@@ -11,22 +11,20 @@ const hideSetupWdw = target => {
     // Checks for buttons or task container classes
     if (target.contains('c-setup-wdw__btn') || target.contains('l-container__tasks')) {
       setupTaskWdw.classList.add('m-setup-wdw--display-none');
+      setupTaskWdw.reset();
     }
   }
 }
 
-taskContainer.addEventListener('click', e => {  
-  const elementClassList = e.target.classList;
-
-
+const displayDropdown = (targetClassList, target) => {
   // Show/Hide dropdown
-  if (elementClassList.contains('c-task__dropdown-arrow')) {
+  if (targetClassList.contains('c-task__dropdown-arrow')) {
     // Closest finds parent of the target then the dropdown children with a class
-    const taskDropdownClassList = e.target.closest('.m-task').querySelector('.o-task__dropdown').classList;      
+    const taskDropdownClassList = target.closest('.m-task').querySelector('.o-task__dropdown').classList;      
     // Hide or show dropdown
     taskDropdownClassList.toggle('o-task__dropdown--hidden');
     // Changes dropdown arrow direction (image)
-    const dropdownBtn = e.target.closest('.m-task').querySelector('.c-task__dropdown-arrow');    
+    const dropdownBtn = target.closest('.m-task').querySelector('.c-task__dropdown-arrow');    
 
     if (taskDropdownClassList.contains('o-task__dropdown--hidden')) {
       dropdownBtn.innerHTML = '<img src="../assets/angulo-pequeno-hacia-abajo.svg" alt="Arrow pointing down" class="c-task__icon-arrow-down c-task__dropdown-arrow"></img>';
@@ -34,18 +32,31 @@ taskContainer.addEventListener('click', e => {
       dropdownBtn.innerHTML = '<img src="../assets/angulo-pequeno-hacia-arriba.svg" alt="Arrow pointing up" class="c-task__icon-arrow-up c-task__dropdown-arrow">';
     }
   }
+}
 
+const switchCountBtn = (targetClassList, target) => {
+    // Switch stop/start buttons
+    if (targetClassList.contains('c-task__btn--is-active')) {
+      targetClassList.remove('c-task__btn--is-active');
+      targetClassList.add('c-task__btn--is-unactive');
+      target.textContent = 'Start';
+    } else if (targetClassList.contains('c-task__btn--is-unactive')) {
+      targetClassList.remove('c-task__btn--is-unactive');
+      targetClassList.add('c-task__btn--is-active');
+      target.textContent = 'Stop';
+    }
   
-  // Switch stop/start buttons
-  if (elementClassList.contains('c-task__btn--is-active')) {
-    elementClassList.remove('c-task__btn--is-active');
-    elementClassList.add('c-task__btn--is-unactive');
-    e.target.textContent = 'Start';
-  } else if (elementClassList.contains('c-task__btn--is-unactive')) {
-    elementClassList.remove('c-task__btn--is-unactive');
-    elementClassList.add('c-task__btn--is-active');
-    e.target.textContent = 'Stop';
-  }
+}
+
+
+taskContainer.addEventListener('click', e => {  
+  const targetClassList = e.target.classList;
+  const targetElement = e.target;
+
+  // Hide setup-wdw when clicked outside of it
+  hideSetupWdw(targetClassList);
+  // Shows/hide dropdown
+  displayDropdown(targetClassList, targetElement);
 
 });
 

@@ -6,16 +6,19 @@ import "./styles/style.scss"
 // Classes
 
 class Task {
-  constructor (name, category, breakSetup) {
+  constructor (name, category, breakSetup, index) {
     this.name = name;
     this.category = category;
-    this.breakSetup = breakSetup
+    this.breakSetup = breakSetup;
+    this.index = index;
   }
-  focusDuration = 0;
+  focusSeconds = 0;
+  focusMinutes = 0;
+  focusHours = 0;
 
   addTaskHTML() {
     taskContainer.innerHTML += `
-    <div class="m-task">
+    <div class="m-task" id="${this.index}">
       <div class="o-task__display">
         <span class="c-task__name c-text__span js-task__name">${this.name}</span>
         <button class="c-task__btn c-btn js-btn c-task__btn--is-unactive">Start</button>
@@ -36,8 +39,16 @@ class Task {
     </div>
   `   
   }
-  countUp() {
-
+  countUp(targetClassList, targetElement) {
+    if (targetClassList.contains('c-task__btn--is-unactive')) {
+      let h = this.focusHours;
+      let m = this.focusMinutes;
+      let s = this.focusSeconds;
+      h++;
+      console.log(h, this.focusHours);
+      // Switch stop/start button style
+      switchCountBtn(targetClassList, targetElement);
+    }   
   }
   setStartTime() {
 
@@ -51,26 +62,48 @@ class Task {
 }
 
 const taskObjs = [];
+// Creates Task obj instances and pushes them to taskObjs array
 const addTask = (name, category, breakSetup) => {
-  const taskObj = new Task(name, category, breakSetup);
+  
+  const taskObj = new Task(name, category, breakSetup, taskObjs.length);
   taskObjs.push(taskObj);
-  const lastTaskObj = taskObjs.length - 1
-  taskObjs[lastTaskObj].addTaskHTML();
+  const lastTaskObj = taskObjs.length - 1;  
+  taskObjs[lastTaskObj].addTaskHTML();  
 }
 
 
-
+// Event listeners for the setup-wdw
 setupTaskWdw.addEventListener('click', e => {
+  e.preventDefault();
   const targetClassList = e.target.classList;
   
   // Checks if target is ok btn
   if (targetClassList.contains('c-setup-wdw__btn-ok')) {
-    const name = document.querySelector('#taskName').value;    
-    const category = document.querySelector('#taskCategory').value;    
-    const breakSetup = breakSlider.valueAsNumber;
-    console.log(targetClassList);
-  
-    addTask(name, category, breakSetup);
-    hideSetupWdw(targetClassList);
+
+    const name = document.querySelector('#taskName').value.trim();    
+    const category = document.querySelector('#taskCategory').value.trim();    
+    const breakSetup = breakSlider.valueAsNumber;    
+    
+    // Checks if name and category are not empty
+    if (name.length !== 0 && category.length !== 0) {
+      addTask(name, category, breakSetup);
+      hideSetupWdw(targetClassList); 
+    } else if (name.length === 0 || category.length === 0) {
+      console.log('You must choose a name and category');
+    }
+  }  
+});
+
+
+taskContainer.addEventListener('click', e => {
+  const targetElement = e.target;
+  const targetClassList = e.target.classList;
+  // Finds closest m-task class
+  const closestTask = targetElement.closest('.m-task');
+  // if closestTask is null then it doesn't do anything
+  if (closestTask !== null) {
+    const objIndex = parseInt(closestTask.id);
+    const taskObj = taskObjs[objIndex];
+    taskObj.countUp(targetClassList, targetElement);    
   }
 });

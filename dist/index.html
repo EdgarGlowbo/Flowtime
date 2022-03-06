@@ -6,9 +6,11 @@
   <title>Flowtime</title>
 </head>
 <body>
-  <div class="l-container l-container--setup-wdw-displayed">
-    <div class="l-container__tasks l-container__tasks--setup-wdw-displayed"></div>
-    <div class="m-setup-wdw m-setup-wdw--display-none">
+  <div class="l-container">
+
+    <div class="l-container__tasks"></div>
+
+    <form class="m-setup-wdw m-setup-wdw--display-none" autocomplete="off" action="submit">
       <div class="o-setup-wdw__input-container flex-center">
         <span class="c-text__span c-setup-wdw__name c-text__span--font-color-secondary c-label">Name:</span>
         <input type="text" class="c-input-field c-input-field--border-solid c-setup-wdw__input-name c-input-field--font-color-secondary" id="taskName">
@@ -24,7 +26,8 @@
         <button class="c-setup-wdw__btn-ok c-setup-wdw__btn c-btn c-btn--font-color-secondary">Ok</button>
         <button class="c-setup-wdw__btn-cancel c-setup-wdw__btn c-btn c-btn--font-color-secondary">Cancel</button>
       </div>        
-    </div> 
+    </form>
+
     <button class="c-add-task-btn js-add-task-btn"><img src="../assets/anadir.svg" alt="Signo de añadir" class="c-add-task-img js-add-task-btn"></button>
     
   </div>
