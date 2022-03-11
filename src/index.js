@@ -13,8 +13,7 @@ class Task {
     this.index = index;
   }
   focusSeconds = 0;
-  focusMinutes = 0;
-  focusHours = 0;
+  intervalID;    
 
   addTaskHTML() {
     taskContainer.innerHTML += `
@@ -39,16 +38,36 @@ class Task {
     </div>
   `   
   }
-  countUp(targetClassList, targetElement) {
+  countUp(targetClassList, targetElement, taskParentElement) {
+    let s = 0;
+    let m = 0;        
+    const countUpDisplayElement = taskParentElement.querySelector('.c-task__count-up');
+
+    
+  
+    // if count up is not active (btn is green)     
     if (targetClassList.contains('c-task__btn--is-unactive')) {
-      let h = this.focusHours;
-      let m = this.focusMinutes;
-      let s = this.focusSeconds;
-      h++;
-      console.log(h, this.focusHours);
-      // Switch stop/start button style
-      switchCountBtn(targetClassList, targetElement);
-    }   
+      this.intervalID = setInterval(() => {
+        // Adds 1 every second to focusSeconds property
+        this.focusSeconds++;
+        if (s < 59) {
+          s++;
+          // slice is to only get the last two digits of the string
+          countUpDisplayElement.innerHTML = `0${m}`.slice(-2) + ':' + `0${s}`.slice(-2);
+        // s is equal to 59 so it resets to 0        
+        } else if (s === 59) {
+          m++;
+          s = 0;
+          countUpDisplayElement.innerHTML = `0${m}`.slice(-2) + ':' + `0${s}`.slice(-2);
+        }
+      }, 1000);
+      console.log(this.intervalID);
+    } else if (targetClassList.contains('c-task__btn--is-active')) {
+      // 1 is the id of the secondsInterval? somehow it was undefined but this worked
+      clearInterval(this.intervalID);
+      countUpDisplayElement.innerHTML = '00:00';
+    }
+    switchCountBtn(targetClassList, targetElement);           
   }
   setStartTime() {
 
@@ -91,6 +110,9 @@ setupTaskWdw.addEventListener('click', e => {
     } else if (name.length === 0 || category.length === 0) {
       console.log('You must choose a name and category');
     }
+  // Checks if target is cancel button
+  } else if (targetClassList.contains('c-setup-wdw__btn-cancel')){
+    hideSetupWdw(targetClassList); 
   }  
 });
 
@@ -103,7 +125,12 @@ taskContainer.addEventListener('click', e => {
   // if closestTask is null then it doesn't do anything
   if (closestTask !== null) {
     const objIndex = parseInt(closestTask.id);
+    // Gets an specific obj from taskObjs array with the element id.
     const taskObj = taskObjs[objIndex];
-    taskObj.countUp(targetClassList, targetElement);    
+
+    // Calls countUp method
+    taskObj.countUp(targetClassList, targetElement, closestTask);
+
+    
   }
 });
