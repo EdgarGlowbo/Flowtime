@@ -1,5 +1,5 @@
 import "./styles/style.scss"
-
+import { getTime, format} from 'date-fns'
 // Queries
 
 
@@ -13,26 +13,28 @@ class Task {
     this.index = index;
   }
   focusSeconds = 0;
-  intervalID;    
+  intervalID;  
 
   addTaskHTML() {
     taskContainer.innerHTML += `
     <div class="m-task" id="${this.index}">
       <div class="o-task__display">
         <span class="c-task__name c-text__span js-task__name">${this.name}</span>
+        <button class="c-task__btn c-category-btn c-btn">${this.category}</button>
         <button class="c-task__btn c-btn js-btn c-task__btn--is-unactive">Start</button>
         <span class="c-task__count-up c-task__count-up--is-active c-text__span">00:00</span>
       </div>
       <div class="o-task__dropdown o-task__dropdown--hidden">
-        <div class="o-task__start-time">
-          <span class="c-task__label c-text__span">Start time:</span>
-          <input type="text" value="" class="c-task__start-time c-input-field" readonly="readonly">            
+        <div class="o-task-set-time-container">
+          <div class="o-task__start-time">
+            <span class="c-task__label c-text__span">Start time:</span>
+            <input type="text" class="c-task__start-time c-input-field" readonly="readonly" value="" name="startTime0">            
+          </div>
+          <div class="o-task__stop-time">
+            <span class="c-task__label c-text__span">Stop time:</span>
+            <input type="text" class="c-task__stop-time c-input-field" readonly="readonly" value="" name="stopTime0">
+          </div>        
         </div>
-        <div class="o-task__stop-time">
-          <span class="c-task__label c-text__span">Stop time:</span>
-          <input type="text" value="" class="c-task__stop-time c-input-field" readonly="readonly">            
-        </div>
-        <button class="c-task__btn c-category-btn c-btn">${this.category}</button>
       </div>
       <div class="c-task__dropdown-arrow"><img src="../assets/angulo-pequeno-hacia-abajo.svg" alt="Arrow pointing down" class="c-task__icon-arrow-down c-task__dropdown-arrow"></div>
     </div>
@@ -41,9 +43,7 @@ class Task {
   countUp(targetClassList, targetElement, taskParentElement) {
     let s = 0;
     let m = 0;        
-    const countUpDisplayElement = taskParentElement.querySelector('.c-task__count-up');
-
-    
+    const countUpDisplayElement = taskParentElement.querySelector('.c-task__count-up');    
   
     // if count up is not active (btn is green)     
     if (targetClassList.contains('c-task__btn--is-unactive')) {
@@ -60,20 +60,49 @@ class Task {
           s = 0;
           countUpDisplayElement.innerHTML = `0${m}`.slice(-2) + ':' + `0${s}`.slice(-2);
         }
-      }, 1000);
-      console.log(this.intervalID);
+      }, 1000);      
     } else if (targetClassList.contains('c-task__btn--is-active')) {
       // 1 is the id of the secondsInterval? somehow it was undefined but this worked
       clearInterval(this.intervalID);
       countUpDisplayElement.innerHTML = '00:00';
     }
-    switchCountBtn(targetClassList, targetElement);           
+    switchCountBtn(targetClassList, targetElement);    
   }
-  setStartTime() {
+  // Sets start or stoptime
+  setTime(targetClasses, targetElement, parentElement) {
+    const currentDate = format(new Date(), 'kk:mm');
+    const dropdownContainer = parentElement.querySelector('.o-task__dropdown');
+    let startTimeInput = parentElement.querySelectorAll('.c-task__start-time');
+    const stopTimeInput = parentElement.querySelectorAll('.c-task__stop-time');
 
-  }
-  setStopTime() {
-    
+    // Gets last element index in startTimeInput node list
+    let lastRow = startTimeInput.length - 1;
+
+    if (targetClasses.contains('c-task__btn--is-active')) {      
+      // Checks if startTimeInput is not empty anymore      
+      if (startTimeInput[lastRow].value.length > 0) {
+        
+        // Adds addtional row of start/stopTime        
+        dropdownContainer.innerHTML += `
+          <div class="o-task-set-time-container">
+            <div class="o-task__start-time">
+              <span class="c-task__label c-text__span">Start time:</span>
+              <input type="text" class="c-task__start-time c-input-field" readonly="readonly" value="" name="startTime${lastRow + 1}">            
+            </div>
+            <div class="o-task__stop-time">
+              <span class="c-task__label c-text__span">Stop time:</span>
+              <input type="text" class="c-task__stop-time c-input-field" readonly="readonly" value="" name="stopTime${lastRow + 1}">
+            </div>        
+          </div>
+        `;      
+        // Updates the nodeList once html template added
+        startTimeInput = parentElement.querySelectorAll('.c-task__start-time');        
+        lastRow = startTimeInput.length - 1;
+      }      
+      startTimeInput[lastRow].setAttribute('value', currentDate);
+    } else if (targetClasses.contains('c-task__btn--is-unactive')) {          
+      stopTimeInput[lastRow].setAttribute('value', currentDate);
+    }    
   }
   deleteTask() {
 
@@ -127,10 +156,8 @@ taskContainer.addEventListener('click', e => {
     const objIndex = parseInt(closestTask.id);
     // Gets an specific obj from taskObjs array with the element id.
     const taskObj = taskObjs[objIndex];
-
-    // Calls countUp method
-    taskObj.countUp(targetClassList, targetElement, closestTask);
-
-    
+  
+    taskObj.countUp(targetClassList, targetElement, closestTask);    
+    taskObj.setTime(targetClassList, targetElement, closestTask);    
   }
 });

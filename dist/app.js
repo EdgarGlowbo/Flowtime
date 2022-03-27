@@ -3,6 +3,22 @@ const taskContainer = document.querySelector('.l-container__tasks');
 const addTaskBtn = document.querySelector('.c-add-task-btn');
 const setupTaskWdw = document.querySelector('.m-setup-wdw');
 const breakSlider = document.querySelector('#taskBreak');
+const breakText = document.querySelector('.c-setup-wdw__break-duration-text');
+
+// Text changes when value changes from slider
+const changeSliderText = () => {
+  const breakSetup = breakSlider.valueAsNumber;    
+  if (breakSetup === 5) {
+    breakText.textContent = 'Very Short';
+  } else if (breakSetup === 4) {
+    breakText.textContent = 'Short';
+  } else if (breakSetup === 3) {
+    breakText.textContent = 'Medium';
+  } else if (breakSetup === 2) {
+    breakText.textContent = 'Long';
+  }
+}
+
 
 const hideSetupWdw = target => {
    // Hides setupTask Window
@@ -14,6 +30,7 @@ const hideSetupWdw = target => {
       setupTaskWdw.reset();
     }
   }
+  changeSliderText();
 }
 
 const displayDropdown = (targetClassList, target) => {
@@ -33,20 +50,20 @@ const displayDropdown = (targetClassList, target) => {
     }
   }
 }
-
 const switchCountBtn = (targetClassList, target) => {
-    // Switch stop/start buttons
-    if (targetClassList.contains('c-task__btn--is-active')) {
-      targetClassList.remove('c-task__btn--is-active');
-      targetClassList.add('c-task__btn--is-unactive');
-      target.textContent = 'Start';
-    } else if (targetClassList.contains('c-task__btn--is-unactive')) {
-      targetClassList.remove('c-task__btn--is-unactive');
-      targetClassList.add('c-task__btn--is-active');
-      target.textContent = 'Stop';
-    }
-  
+  // Switch stop/start buttons
+  if (targetClassList.contains('c-task__btn--is-active')) {
+    targetClassList.remove('c-task__btn--is-active');
+    targetClassList.add('c-task__btn--is-unactive');
+    target.textContent = 'Start';
+  } else if (targetClassList.contains('c-task__btn--is-unactive')) {
+    targetClassList.remove('c-task__btn--is-unactive');
+    targetClassList.add('c-task__btn--is-active');
+    target.textContent = 'Stop';
+  }
+
 }
+
 
 
 taskContainer.addEventListener('click', e => {  
@@ -66,4 +83,8 @@ addTaskBtn.addEventListener('click', e => {
   if(elementClassList.contains('js-add-task-btn')) {
     setupTaskWdw.classList.remove('m-setup-wdw--display-none');
   }
+});
+
+breakSlider.addEventListener('change', () => {
+  changeSliderText(); 
 });
