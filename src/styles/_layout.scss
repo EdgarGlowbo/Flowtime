@@ -113,3 +113,30 @@
   display: flex;
   margin: 3px;
 }
+
+.l-container__header {
+  display: flex;
+  height: 50px;
+  justify-content: space-between;
+  align-items: center;  
+}
+
+.c-btn, .c-icon__histogram {
+  height: 67%;
+  margin: 5px;
+}
+.c-text__h1 {
+  margin: 5px;
+}
+.l-container__break {
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.c-current-break-text {
+  margin-right: 7px;
+}
+.l-container__break {
+  margin-bottom: 5px;
+}

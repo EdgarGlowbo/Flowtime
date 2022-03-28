@@ -1,5 +1,5 @@
 @use './variables' as *;
-.c-text__span, button, input{
+.c-text__span, button, input, .c-text{
   font-size: $font-size-content;
   font-family: Arial, Helvetica, sans-serif;
   color: $font-primary;
@@ -22,4 +22,13 @@
 .c-input-field {
   text-align: center;
   color: $font-secondary;
+}
+.c-text__h1 {
+  font-size: $font-size-h1;
+  color: $font-secondary;
+}
+
+.c-current-break-text {
+ font-weight: bolder;
+ font-size: $font-size-label;
 }
