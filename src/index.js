@@ -12,7 +12,7 @@ class Task {
     this.breakSetup = breakSetup;
     this.index = index;
   }
-  focusSeconds = 0;
+  focusTime = 0;
   intervalID;  
 
   addTaskHTML() {
@@ -47,24 +47,24 @@ class Task {
   
     // if count up is not active (btn is green)     
     if (targetClassList.contains('c-task__btn--is-unactive')) {
+      const countUpStart = new Date().getTime();
       this.intervalID = setInterval(() => {
-        // Adds 1 every second to focusSeconds property
-        this.focusSeconds++;
-        if (s < 59) {
-          s++;
-          // slice is to only get the last two digits of the string
-          countUpDisplayElement.innerHTML = `0${m}`.slice(-2) + ':' + `0${s}`.slice(-2);
-        // s is equal to 59 so it resets to 0        
-        } else if (s === 59) {
-          m++;
-          s = 0;
-          countUpDisplayElement.innerHTML = `0${m}`.slice(-2) + ':' + `0${s}`.slice(-2);
-        }
+        const countUpCurrent = new Date().getTime();
+        this.focusTime = countUpCurrent - countUpStart;
+        const dateTimer = new Date(this.focusTime);
+        s = dateTimer.getSeconds();
+        m = dateTimer.getMinutes();        
+        
+        // slice is to only get the last two digits of the string
+        countUpDisplayElement.innerHTML = `0${m}`.slice(-2) + ':' + `0${s}`.slice(-2);                 
+        countUpDisplayElement.innerHTML = `0${m}`.slice(-2) + ':' + `0${s}`.slice(-2);
+        
       }, 1000);      
-    } else if (targetClassList.contains('c-task__btn--is-active')) {
-      // 1 is the id of the secondsInterval? somehow it was undefined but this worked
+    } else if (targetClassList.contains('c-task__btn--is-active')) {      
       clearInterval(this.intervalID);
       countUpDisplayElement.innerHTML = '00:00';
+      this.focusTime = new Date(this.focusTime).getMinutes();
+      console.log(this.focusTime);
     }
     switchCountBtn(targetClassList, targetElement);    
   }
@@ -103,6 +103,9 @@ class Task {
     } else if (targetClasses.contains('c-task__btn--is-unactive')) {          
       stopTimeInput[lastRow].setAttribute('value', currentDate);
     }    
+  }
+  breakTimer() {
+
   }
   deleteTask() {
 
