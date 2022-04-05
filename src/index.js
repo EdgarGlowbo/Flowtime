@@ -1,6 +1,7 @@
 import "./styles/style.scss"
 import { getTime, format} from 'date-fns'
 // Queries
+const countdownDisplay = document.querySelector('.js-count-down');
 
 
 // Classes
@@ -13,7 +14,9 @@ class Task {
     this.index = index;
   }
   focusTime = 0;
-  intervalID;  
+  intervalID;
+  breakIntervalID;
+  breakDuration = 0;
 
   addTaskHTML() {
     taskContainer.innerHTML += `
@@ -43,6 +46,8 @@ class Task {
   countUp(targetClassList, targetElement, taskParentElement) {
     let s = 0;
     let m = 0;        
+    let h = 0;        
+
     const countUpDisplayElement = taskParentElement.querySelector('.c-task__count-up');    
   
     // if count up is not active (btn is green)     
@@ -53,18 +58,20 @@ class Task {
         this.focusTime = countUpCurrent - countUpStart;
         const dateTimer = new Date(this.focusTime);
         s = dateTimer.getSeconds();
-        m = dateTimer.getMinutes();        
+        m = dateTimer.getMinutes();                
+        h = Math.floor(this.focusTime / 3600000);
+        
         
         // slice is to only get the last two digits of the string
-        countUpDisplayElement.innerHTML = `0${m}`.slice(-2) + ':' + `0${s}`.slice(-2);                 
         countUpDisplayElement.innerHTML = `0${m}`.slice(-2) + ':' + `0${s}`.slice(-2);
+        if (h > 0) {
+          countUpDisplayElement.innerHTML = `0${h}`.slice(-2) + ':' + `0${m}`.slice(-2) + ':' + `0${s}`.slice(-2);          
+        }
         
       }, 1000);      
     } else if (targetClassList.contains('c-task__btn--is-active')) {      
       clearInterval(this.intervalID);
-      countUpDisplayElement.innerHTML = '00:00';
-      this.focusTime = new Date(this.focusTime).getMinutes();
-      console.log(this.focusTime);
+      countUpDisplayElement.innerHTML = '00:00';      
     }
     switchCountBtn(targetClassList, targetElement);    
   }
@@ -104,8 +111,42 @@ class Task {
       stopTimeInput[lastRow].setAttribute('value', currentDate);
     }    
   }
-  breakTimer() {
+  breakTimer(targetClasses) {
+    
+    if (targetClasses.contains('c-task__btn--is-unactive')) {
+      this.breakDuration += Math.ceil(this.focusTime / this.breakSetup);
+      
+      
+      // First time definition so it gets displayed instantly on click event
+      let dateBreakDuration = new Date(this.breakDuration);
+      let m = dateBreakDuration.getMinutes();
+      let s = dateBreakDuration.getSeconds();
+      let h = Math.floor(this.breakDuration / 3600000);
+      countdownDisplay.textContent = h > 0 ?  `0${h}`.slice(-2) + ':' + `0${m}`.slice(-2) + ':' + `0${s}`.slice(-2) : `0${m}`.slice(-2) + ':' + `0${s}`.slice(-2);          
 
+      // Interval updates timer to countdown
+      this.breakIntervalID = setInterval(() => {
+        dateBreakDuration = new Date(this.breakDuration);    
+        m = dateBreakDuration.getMinutes();
+        s = dateBreakDuration.getSeconds();
+        h = Math.floor(this.breakDuration / 3600000);
+        countdownDisplay.textContent = h > 0 ? `0${h}`.slice(-2) + ':' + `0${m}`.slice(-2) + ':' + `0${s}`.slice(-2) : `0${m}`.slice(-2) + ':' + `0${s}`.slice(-2);          
+        this.breakDuration = this.breakDuration - 1000;
+
+        // Stops count down to avoid negative values
+        if (this.breakDuration <= 0) {
+          clearInterval(this.breakIntervalID);
+          this.breakDuration = 0;                
+          countdownDisplay.textContent = '00:00';          
+        }        
+      }, 1000)
+      console.log(this.breakDuration);
+
+    } else if (targetClasses.contains('c-task__btn--is-active')) {
+      // Pause countdown when task starts (focusTime)
+      clearInterval(this.breakIntervalID);
+      console.log(this.breakDuration);
+    }
   }
   deleteTask() {
 
@@ -161,6 +202,7 @@ taskContainer.addEventListener('click', e => {
     const taskObj = taskObjs[objIndex];
   
     taskObj.countUp(targetClassList, targetElement, closestTask);    
-    taskObj.setTime(targetClassList, targetElement, closestTask);    
+    taskObj.setTime(targetClassList, targetElement, closestTask);
+    taskObj.breakTimer(targetClassList);
   }
 });
