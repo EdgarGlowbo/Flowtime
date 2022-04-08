@@ -21,7 +21,7 @@ class Task {
 
   addTaskHTML() {
     taskContainer.innerHTML += `
-    <div class="m-task" id="${this.index}">
+    <div class="m-task" id="task${this.index}">
       <div class="o-task__display">
         <span class="c-task__name c-text__span js-task__name">${this.name}</span>
         <button class="c-task__btn c-category-btn c-btn">${this.category}</button>
@@ -151,9 +151,14 @@ class Task {
     }
   }
   deleteTask(targetClasses) {
-    
+    if (targetClasses.contains('c-task__delete')) {
+      // Gets task by id
+      const targetTask = document.querySelector(`#task${this.index}`);
+      targetTask.remove();
+      // Splice method removes 1 element from taskObjs arr starting from current task index
+      taskObjs.splice(this.index, 1);      
 
-
+    }    
   }
 }
 
@@ -201,7 +206,9 @@ taskContainer.addEventListener('click', e => {
   const closestTask = targetElement.closest('.m-task');
   // if closestTask is null then it doesn't do anything
   if (closestTask !== null) {
-    const objIndex = parseInt(closestTask.id);
+    const objIndex = parseInt(closestTask.id.slice(-1));
+
+    console.log(objIndex);
     // Gets an specific obj from taskObjs array with the element id.
     const taskObj = taskObjs[objIndex];
   
