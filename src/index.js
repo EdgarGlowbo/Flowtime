@@ -7,11 +7,10 @@ const countdownDisplay = document.querySelector('.js-count-down');
 // Classes
 
 class Task {
-  constructor (name, category, breakSetup, index) {
+  constructor (name, category, breakSetup) {
     this.name = name;
     this.category = category;
-    this.breakSetup = breakSetup;
-    this.index = index;
+    this.breakSetup = breakSetup;    
   }
   focusTime = 0;
   addedFocusTime;
@@ -21,7 +20,7 @@ class Task {
 
   addTaskHTML() {
     taskContainer.innerHTML += `
-    <div class="m-task" id="task${this.index}">
+    <div class="m-task">
       <div class="o-task__display">
         <span class="c-task__name c-text__span js-task__name">${this.name}</span>
         <button class="c-task__btn c-category-btn c-btn">${this.category}</button>
@@ -150,14 +149,13 @@ class Task {
       clearInterval(this.breakIntervalID);      
     }
   }
-  deleteTask(targetClasses) {
+  deleteTask(targetClasses, tasksNodeList, index) {    
     if (targetClasses.contains('c-task__delete')) {
-      // Gets task by id
-      const targetTask = document.querySelector(`#task${this.index}`);
+      const targetTask = tasksNodeList[index];
+      // Removes html from targetTask      
       targetTask.remove();
       // Splice method removes 1 element from taskObjs arr starting from current task index
-      taskObjs.splice(this.index, 1);      
-
+      taskObjs.splice(this.index, 1);                 
     }    
   }
 }
@@ -202,19 +200,19 @@ setupTaskWdw.addEventListener('click', e => {
 taskContainer.addEventListener('click', e => {
   const targetElement = e.target;
   const targetClassList = e.target.classList;
+  const tasks = document.querySelectorAll('.m-task');
   // Finds closest m-task class
   const closestTask = targetElement.closest('.m-task');
   // if closestTask is null then it doesn't do anything
   if (closestTask !== null) {
-    const objIndex = parseInt(closestTask.id.slice(-1));
-
-    console.log(objIndex);
-    // Gets an specific obj from taskObjs array with the element id.
+    // Gets index of closestTask (.m-task element) from tasks node list making it an arr and using call to use indexOf method
+    const objIndex = Array.prototype.indexOf.call(tasks, closestTask);        
+    // Gets an specific obj from taskObjs array. Same index as tasks Node List.
     const taskObj = taskObjs[objIndex];
   
     taskObj.countUp(targetClassList, targetElement, closestTask);    
     taskObj.setTime(targetClassList, targetElement, closestTask);
     taskObj.breakTimer(targetClassList);
-    taskObj.deleteTask(targetClassList);
+    taskObj.deleteTask(targetClassList, tasks, objIndex);
   }
 });
