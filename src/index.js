@@ -14,6 +14,7 @@ class Task {
     this.index = index;
   }
   focusTime = 0;
+  addedFocusTime;
   intervalID;
   breakIntervalID;
   breakDuration = 0;
@@ -36,7 +37,8 @@ class Task {
           <div class="o-task__stop-time">
             <span class="c-task__label c-text__span">Stop time:</span>
             <input type="text" class="c-task__stop-time c-input-field" readonly="readonly" value="" name="stopTime0">
-          </div>        
+          </div>
+          <div class="c-btn c-btn--no-margin"><img src="/assets/circulo-cruzado.svg" alt="delete button" class="c-task__delete"></div>        
         </div>
       </div>
       <div class="c-task__dropdown-arrow"><img src="../assets/angulo-pequeno-hacia-abajo.svg" alt="Arrow pointing down" class="c-task__icon-arrow-down c-task__dropdown-arrow"></div>
@@ -51,10 +53,11 @@ class Task {
     const countUpDisplayElement = taskParentElement.querySelector('.c-task__count-up');    
   
     // if count up is not active (btn is green)     
-    if (targetClassList.contains('c-task__btn--is-unactive')) {
+    if (targetClassList.contains('c-task__btn--is-unactive')) {      
       const countUpStart = new Date().getTime();
       this.intervalID = setInterval(() => {
         const countUpCurrent = new Date().getTime();
+        // this.focusTime is set every second to the difference of time between countUpCurrent (fixed time) and countUpStart (updated every second)
         this.focusTime = countUpCurrent - countUpStart;
         const dateTimer = new Date(this.focusTime);
         s = dateTimer.getSeconds();
@@ -71,7 +74,8 @@ class Task {
       }, 1000);      
     } else if (targetClassList.contains('c-task__btn--is-active')) {      
       clearInterval(this.intervalID);
-      countUpDisplayElement.innerHTML = '00:00';      
+      countUpDisplayElement.innerHTML = '00:00';
+      this.addedFocusTime += this.focusTime;      
     }
     switchCountBtn(targetClassList, targetElement);    
   }
@@ -139,16 +143,16 @@ class Task {
           this.breakDuration = 0;                
           countdownDisplay.textContent = '00:00';          
         }        
-      }, 1000)
-      console.log(this.breakDuration);
+      }, 1000)      
 
     } else if (targetClasses.contains('c-task__btn--is-active')) {
       // Pause countdown when task starts (focusTime)
-      clearInterval(this.breakIntervalID);
-      console.log(this.breakDuration);
+      clearInterval(this.breakIntervalID);      
     }
   }
-  deleteTask() {
+  deleteTask(targetClasses) {
+    
+
 
   }
 }
@@ -204,5 +208,6 @@ taskContainer.addEventListener('click', e => {
     taskObj.countUp(targetClassList, targetElement, closestTask);    
     taskObj.setTime(targetClassList, targetElement, closestTask);
     taskObj.breakTimer(targetClassList);
+    taskObj.deleteTask(targetClassList);
   }
 });
