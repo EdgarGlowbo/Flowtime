@@ -8,36 +8,15 @@
 <body>
   <div class="l-container">
     <header class="l-container__header">
-      <h1 class="c-text__h1 c-text">Flowtime</h1>
-      <button class="c-btn"><img src="/assets/grafico-histograma.svg" alt="Graph icon" class="c-icon__histogram"></button>      
+      <a href="index.html" class="c-link"><h1 class="c-text__h1 c-text">Flowtime</h1></a>            
+      <a href="history.html"><button class="c-btn"><img src="/assets/grafico-histograma.svg" alt="Graph icon" class="c-icon__histogram"></button></a>      
     </header>
     <div class="l-container__break">
       <span class="c-text__span c-text__span--font-color-secondary c-current-break-text">Current break:</span>
       <span class="c-text__span js-count-down c-text__span--font-color-secondary c-current-break">00:00</span>
     </div>
-
     <div class="l-container__tasks"></div>
-
-    <form class="m-setup-wdw m-setup-wdw--display-none" autocomplete="off" action="submit">
-      <div class="o-setup-wdw__input-container flex-center">
-        <span class="c-text__span c-setup-wdw__name c-text__span--font-color-secondary c-label">Name:</span>
-        <input type="text" class="c-input-field c-input-field--border-solid c-setup-wdw__input-name c-input-field--font-color-secondary" id="taskName">
-        <span class="c-text__span c-setup-wdw__category c-text__span--font-color-secondary c-label">Category:</span>
-        <input type="text" class="c-input-field c-input-field--border-solid c-setup-wdw__input-category c-input-field--font-color-secondary" id="taskCategory">
-      </div>
-      <div class="o-setup-wdw__slidecontainer flex-center">
-        <span class="c-text__span c-text__span--font-color-secondary c-label">Break setup:</span>    
-        <input type="range" min="2" max="5" value="4" class="c-setup-wdw__slider" id="taskBreak">
-        <span class="c-text__span c-setup-wdw__break-duration-text c-text__span--font-color-secondary">Short</span>
-      </div>
-      <div class="o-setup-wdw__btn-container">
-        <button class="c-setup-wdw__btn-ok c-setup-wdw__btn c-btn c-btn--font-color-secondary">Ok</button>
-        <button class="c-setup-wdw__btn-cancel c-setup-wdw__btn c-btn c-btn--font-color-secondary">Cancel</button>
-      </div>        
-    </form>    
-    <button class="c-add-task-btn js-add-task-btn"><img src="../assets/anadir.svg" alt="Signo de añadir" class="c-add-task-img js-add-task-btn"></button>
   </div>
-  <script src="app.js"></script>
-  <script src="bundle.js"></script>  
+  <script src="history.js"></script>  
 </body>
 </html>

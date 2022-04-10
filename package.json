@@ -2,7 +2,7 @@
   "name": "flowtime",
   "version": "1.0.0",
   "description": "productivity app",
-  "main": "index.js",
+  "main": "./src/app/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack"
