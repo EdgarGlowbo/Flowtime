@@ -1,5 +1,5 @@
 import "./styles/style.scss"
-import { getTime, format} from 'date-fns'
+import { format } from 'date-fns'
 // Queries
 const countdownDisplay = document.querySelector('.js-count-down');
 
