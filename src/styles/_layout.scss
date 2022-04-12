@@ -121,7 +121,7 @@
   align-items: center;  
 }
 
-.c-btn, .c-icon__histogram {
+.c-btn__history, .c-icon__histogram {
   height: 67%;
   margin: 5px;
 }
@@ -145,4 +145,28 @@
 }
 .c-btn--no-margin {
   margin: 0;
+}
+
+.l-container__switch-category {
+  display: flex;
+  height: 8%;
+  align-items: center;
+  justify-content: space-between;
+}
+.c-icon__arrow {
+  height: 50%;
+}
+.c-switch-category__btn {
+  height: 100%;
+  padding: 5px;
+}
+.l-container__break--no-margin {
+  margin: 0;
+}
+.o-daily-goal {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 30%;
 }

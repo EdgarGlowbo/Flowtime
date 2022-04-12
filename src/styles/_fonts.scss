@@ -1,7 +1,8 @@
 @use './variables' as *;
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&display=swap');
 .c-text__span, button, input, .c-text{
   font-size: $font-size-content;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Quicksand', sans-serif;
   color: $font-primary;
 }
 .c-task__label {
@@ -34,4 +35,7 @@
 }
 .c-link {
   text-decoration: none;
+}
+.c-label--secondary-color {
+  color: $font-secondary;
 }

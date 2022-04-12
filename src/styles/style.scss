@@ -38,6 +38,7 @@
   background-color: $body-color;
   border: solid 0.5px;
   border-radius: 5px;
+  box-shadow: 0 0 5px 0 rgba(0, 0 , 0 , 0.5);
 }
 .c-input-field--border-solid {
   border: 1px solid;
@@ -64,4 +65,15 @@
 .c-task__delete {
   background-color: $btn-secondary;
   border-radius: 5px;  
+}
+.c-switch-category__btn, .l-container__switch-category {
+  background-color: $switch-category-bckgr-color;
+}
+.c-switch-category__category {
+  background-color: aliceblue;
+  flex-grow: 1;
+  margin: 0 14px;
+  border-radius: 10px;
+  padding: 3px;
+  text-align: center;
 }
