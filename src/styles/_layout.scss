@@ -1,4 +1,7 @@
 @use './variables' as *;
+* {
+  box-sizing: border-box;
+}
 .l-container {
   height: $container-height;
   width: $container-width;
@@ -169,4 +172,53 @@
   justify-content: center;
   align-items: center;
   width: 30%;
+}
+
+.l-container__calendar {
+  height: 45%;
+  margin: auto 5px;
+  position: relative;
+  top: 15%;
+}
+.o-cal__header {
+  height: 15%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.c-cal__btn {
+  height: 100%;
+}
+.o-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.c-month {
+  text-transform: uppercase;
+}
+.o-cal__weekdays {
+  height: 10%;
+  width: 100%;
+  display: flex;
+  text-align: center;
+}
+.c-week__day {
+  width: calc(100% / 7);
+  padding: 3px;
+}
+
+.o-cal__days {
+  width: 100%;
+  height: 75%;
+  display: flex;
+  flex-wrap: wrap;
+
+}
+.c-cal__day {
+  width: calc(100% / 7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

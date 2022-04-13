@@ -77,3 +77,21 @@
   padding: 3px;
   text-align: center;
 }
+
+.m-cal {
+  background-color: $cal-bckgr-color;
+  box-shadow: 0 0 5px 0 rgba(0, 0 , 0 , 0.5);
+}
+
+.o-cal__header {
+  background-color: $cal-header-bckgr-color;
+
+}
+.c-cal__btn {
+  background-color: $cal-header-bckgr-color;
+}
+
+.c-cal__arrow {
+  filter: invert(88%) sepia(2%) saturate(1122%) hue-rotate(195deg) brightness(110%) contrast(97%);
+}
+
