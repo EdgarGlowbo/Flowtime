@@ -37,7 +37,7 @@ class Task {
             <span class="c-task__label c-text__span">Stop time:</span>
             <input type="text" class="c-task__stop-time c-input-field" readonly="readonly" value="" name="stopTime0">
           </div>
-          <div class="c-btn c-btn--no-margin"><img src="/assets/circulo-cruzado.svg" alt="delete button" class="c-task__delete"></div>        
+          <div class="c-btn c-btn--no-margin"><img src="../assets/circulo-cruzado.svg" alt="delete button" class="c-task__delete"></div>        
         </div>
       </div>
       <div class="c-task__dropdown-arrow"><img src="../assets/angulo-pequeno-hacia-abajo.svg" alt="Arrow pointing down" class="c-task__icon-arrow-down c-task__dropdown-arrow"></div>
