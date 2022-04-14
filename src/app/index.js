@@ -13,7 +13,7 @@ class Task {
     this.breakSetup = breakSetup;    
   }
   focusTime = 0;
-  addedFocusTime;
+  addedFocusTime = 0;
   intervalID;
   breakIntervalID;
   breakDuration = 0;
@@ -74,7 +74,9 @@ class Task {
     } else if (targetClassList.contains('c-task__btn--is-active')) {      
       clearInterval(this.intervalID);
       countUpDisplayElement.innerHTML = '00:00';
-      this.addedFocusTime += this.focusTime;      
+      this.addedFocusTime += this.focusTime;
+      // Adds to addedFocusTime  property in categoriesObj 
+      categoriesObj[this.category]['addedFocusTime'] += this.addedFocusTime;      
     }
     switchCountBtn(targetClassList, targetElement);    
   }
@@ -160,17 +162,33 @@ class Task {
   }
 }
 
+
+
+const categoriesObj = new Object();
 const taskObjs = [];
 // Creates Task obj instances and pushes them to taskObjs array
 const addTask = (name, category, breakSetup) => {
   
   const taskObj = new Task(name, category, breakSetup, taskObjs.length);
+  // checks if given category already exists (so it doesn't overwrite the addedFocusTime value)
+  if (typeof categoriesObj[category] === 'undefined') {
+    categoriesObj[category] = { addedFocusTime: 0 };
+  }  
   taskObjs.push(taskObj);
   const lastTaskObj = taskObjs.length - 1;  
   taskObjs[lastTaskObj].addTaskHTML();  
 }
 
-
+const capitalizeCategory = (category) => {
+  if (typeof category === 'string') {
+    const lower = category.toLowerCase();
+    const firstCharUpper = category[0].toUpperCase();
+    const capitalized = firstCharUpper + lower.slice(1);
+    return capitalized
+  } else {
+    return category;
+  }      
+}
 // Event listeners for the setup-wdw
 setupTaskWdw.addEventListener('click', e => {
   e.preventDefault();
@@ -185,7 +203,7 @@ setupTaskWdw.addEventListener('click', e => {
     
     // Checks if name and category are not empty
     if (name.length !== 0 && category.length !== 0) {
-      addTask(name, category, breakSetup);
+      addTask(name, capitalizeCategory(category), breakSetup);
       hideSetupWdw(targetClassList); 
     } else if (name.length === 0 || category.length === 0) {
       console.log('You must choose a name and category');

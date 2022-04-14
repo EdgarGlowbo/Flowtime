@@ -78,7 +78,6 @@ class Calendar {
       this.monthDays += `<div class="c-next-date c-cal__day">${j}</div>`;
       j++;
     }
-
     daysContainer.innerHTML = this.monthDays;        
   }
 }
