@@ -1,5 +1,6 @@
 import "../styles/style.scss"
-import { format } from 'date-fns'
+import { format, endOfDay } from 'date-fns'
+// import { setupTaskWdw } from "../../dist/app";
 // Queries
 const countdownDisplay = document.querySelector('.js-count-down');
 
@@ -76,7 +77,7 @@ class Task {
       countUpDisplayElement.innerHTML = '00:00';
       this.addedFocusTime += this.focusTime;
       // Adds to addedFocusTime  property in categoriesObj 
-      categoriesObj[this.category]['addedFocusTime'] += this.addedFocusTime;      
+      categoriesObj[this.category]['addedFocusTime'] += this.addedFocusTime;    
     }
     switchCountBtn(targetClassList, targetElement);    
   }
@@ -164,7 +165,7 @@ class Task {
 
 
 
-const categoriesObj = new Object();
+export const categoriesObj = new Object();
 const taskObjs = [];
 // Creates Task obj instances and pushes them to taskObjs array
 const addTask = (name, category, breakSetup) => {
@@ -189,6 +190,23 @@ const capitalizeCategory = (category) => {
     return category;
   }      
 }
+const resetDailyAddFocusTime = () => {
+  const date = new Date();
+  const now = date.getTime();
+  const endOfTheDay = endOfDay(date).getTime();
+  // ms left till end of the day
+  const timeLeft = endOfTheDay - now;  
+  
+  // Resets addedFocusTime values at the end of a day
+  setTimeout(() => {
+    // Get arr of keys for categoriesObj
+    const arrKeys = Object.keys(categoriesObj);
+    arrKeys.forEach(category => {
+      categoriesObj[category]['addedFocusTime'] = 0;
+    });    
+  }, timeLeft);
+}
+
 // Event listeners for the setup-wdw
 setupTaskWdw.addEventListener('click', e => {
   e.preventDefault();
@@ -234,3 +252,5 @@ taskContainer.addEventListener('click', e => {
     taskObj.deleteTask(targetClassList, tasks, objIndex);
   }
 });
+
+resetDailyAddFocusTime();
