@@ -1,0 +1,116 @@
+@use './variables' as *;
+@use './fonts';
+@use './layout';
+.l-container {
+  background-color: $body-color;
+}
+.m-task {
+  background-color: $elements-main-color;
+  border-radius: 5px;
+}
+.c-btn {
+  border-radius: 5px;
+  border: 0;
+  cursor: pointer;
+}
+.c-input-field {
+  border-radius: 8px;
+  border: none;
+}
+.c-task__btn--is-active {
+  background-color: $btn-secondary;
+}
+.c-task__btn--is-unactive {
+  background-color: $btn-primary;
+}
+.c-task__dropdown-arrow {
+  background-color: $elements-secondary-color;
+  border-radius: 0px 0px 5px 5px;
+  cursor: pointer;
+}
+.c-add-task-btn {
+  background-color: $add-task-btn-color;
+  border-radius: 18px;
+  border: none;
+  cursor: pointer;
+}
+.m-setup-wdw {
+  background-color: $body-color;
+  border: solid 0.5px;
+  border-radius: 5px;
+  box-shadow: 0 0 5px 0 rgba(0, 0 , 0 , 0.5);
+}
+.c-input-field--border-solid {
+  border: 1px solid;
+}
+.c-label, .c-task__label {
+  padding: 3px;
+}
+.c-setup-wdw__input-name, .c-setup-wdw__input-category {
+  width: 70%;
+}
+.c-setup-wdw__break-duration-text {
+  padding: 5px;
+}
+.c-setup-wdw__btn {
+  padding: 5px 20%;
+}
+.c-setup-wdw__btn-cancel{
+  border-left: 1px solid;
+  border-radius: 0px;
+}
+.l-container__break {
+  background-color: $add-task-btn-color;
+}
+.c-task__delete {
+  background-color: $btn-secondary;
+  border-radius: 5px;  
+}
+.c-switch-category__btn, .l-container__switch-category {
+  background-color: $switch-category-bckgr-color;
+}
+.c-switch-category__category {
+  background-color: aliceblue;
+  flex-grow: 1;
+  margin: 0 14px;
+  border-radius: 10px;
+  padding: 3px;
+  text-align: center;
+}
+
+.m-cal {
+  background-color: $cal-bckgr-color;
+  box-shadow: 0 0 5px 0 rgba(0, 0 , 0 , 0.5);
+}
+
+.o-cal__header {
+  background-color: $cal-header-bckgr-color;
+
+}
+.c-cal__btn {
+  background-color: $cal-header-bckgr-color;
+}
+
+.c-cal__arrow {
+  filter: invert(88%) sepia(2%) saturate(1122%) hue-rotate(195deg) brightness(110%) contrast(97%);
+}
+
+.c-cal__day--one {
+  background-color: $color-stage-1;
+}
+.c-cal__day--two {
+  background-color: $color-stage-2;
+}
+
+.c-cal__day--three {
+  background-color: $color-stage-3;
+}
+.c-cal__day--four {
+  background-color: $color-stage-4;
+}
+.c-cal__day--five {
+  background-color: $color-stage-5;
+}
+.c-cal__day--six {
+  background-color: $color-stage-6;
+}

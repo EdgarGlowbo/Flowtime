@@ -1,0 +1,57 @@
+@use './variables' as *;
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&display=swap');
+.c-text__span, button, input, .c-text, .c-text__h1, .c-text__h2, .c-text__h3, div {  
+  font-family: 'Quicksand', sans-serif;
+  color: $font-primary;
+  margin: 0;
+}
+div {
+  color: $font-secondary;  
+}
+.c-task__label {
+  font-size: $font-size-label;
+}
+.c-btn {
+  font-size: $font-size-btn;
+}
+.c-category-btn {
+  color: $font-secondary;
+}
+.c-text__span--font-color-secondary, .c-btn--font-color-secondary, .c-input-field--font-color-secondary {
+  color: $font-secondary;
+}
+.c-label {
+  font-size: $font-size-label;
+}
+.c-input-field {
+  text-align: center;
+  color: $font-secondary;
+}
+.c-text__h1 {
+  font-size: $font-size-h1;
+  color: $font-secondary;
+}
+
+.c-current-break-text {
+ font-weight: bolder;
+ font-size: $font-size-label;
+}
+.c-link {
+  text-decoration: none;
+}
+.c-label--secondary-color {
+  color: $font-secondary;
+}
+
+.c-text__h2 {
+  font-size: $font-size-h2;
+  color: $font-primary;
+}
+.c-text__h3 {
+  font-size: $font-size-h3;
+  color: $font-primary;
+}
+.c-prev-date, .c-next-date {
+  opacity: 0.5;
+
+}
