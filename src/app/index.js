@@ -3,6 +3,7 @@ import { format, endOfDay } from 'date-fns';
 // Queries
 const countdownDisplay = document.querySelector('.js-count-down');
 
+
 // Classes
 
 class Task {
@@ -73,8 +74,7 @@ class Task {
       clearInterval(this.intervalID);
       countUpDisplayElement.innerHTML = '00:00';    
       // Adds focusTime to addedFocusTime  property in categoriesObj 
-      categoriesObj[this.category]['addedFocusTime'] += this.focusTime;
-      console.log(categoriesObj[this.category]['addedFocusTime']);
+      categoriesObj[this.category]['addedFocusTime'] += this.focusTime;      
     }
     switchCountBtn(targetClassList, targetElement);    
   }
@@ -162,7 +162,7 @@ class Task {
 
 
 
-export const categoriesObj = new Object();
+const categoriesObj = new Object();
 
 const taskObjs = [];
 // Creates Task obj instances and pushes them to taskObjs array
