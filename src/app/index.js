@@ -1,9 +1,7 @@
-import "../styles/style.scss"
-import { format, endOfDay } from 'date-fns'
-// import { setupTaskWdw } from "../../dist/app";
+import "../styles/style.scss";
+import { format, endOfDay } from 'date-fns';
 // Queries
 const countdownDisplay = document.querySelector('.js-count-down');
-
 
 // Classes
 
@@ -166,6 +164,7 @@ class Task {
 
 
 export const categoriesObj = new Object();
+
 const taskObjs = [];
 // Creates Task obj instances and pushes them to taskObjs array
 const addTask = (name, category, breakSetup) => {
@@ -206,6 +205,7 @@ const resetDailyAddFocusTime = () => {
     });    
   }, timeLeft);
 }
+
 
 // Event listeners for the setup-wdw
 setupTaskWdw.addEventListener('click', e => {

@@ -1,7 +1,6 @@
 import "../styles/style.scss"
 import { format, getDay } from 'date-fns'
-// import { categoriesObj } from "../app";
-
+// import { categoriesObj } from "../app/index";
 
 // queries
 const calHeader = document.querySelector('.o-cal__header');
