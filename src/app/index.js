@@ -12,7 +12,6 @@ class Task {
     this.breakSetup = breakSetup;    
   }
   focusTime = 0;
-  addedFocusTime = 0;
   intervalID;
   breakIntervalID;
   breakDuration = 0;
@@ -72,10 +71,10 @@ class Task {
       }, 1000);      
     } else if (targetClassList.contains('c-task__btn--is-active')) {      
       clearInterval(this.intervalID);
-      countUpDisplayElement.innerHTML = '00:00';
-      this.addedFocusTime += this.focusTime;
-      // Adds to addedFocusTime  property in categoriesObj 
-      categoriesObj[this.category]['addedFocusTime'] += this.addedFocusTime;    
+      countUpDisplayElement.innerHTML = '00:00';    
+      // Adds focusTime to addedFocusTime  property in categoriesObj 
+      categoriesObj[this.category]['addedFocusTime'] += this.focusTime;
+      console.log(categoriesObj[this.category]['addedFocusTime']);
     }
     switchCountBtn(targetClassList, targetElement);    
   }
