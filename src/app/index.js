@@ -1,5 +1,5 @@
 import "../styles/style.scss";
-import { format, endOfDay } from 'date-fns';
+import { endOfDay } from 'date-fns';
 import { dynamicHTML } from "./app.js";
 import { Task, categoriesObj } from "./task.js";
 
@@ -8,6 +8,7 @@ const taskInstances = {
   init() {
     this.queryDOM();
     this.bindEvents();
+    this.resetDailyAddFocusTime();
   },
   bindEvents() {
     dynamicHTML.setupTaskWdw.addEventListener('click', this.addTask.bind(this));    
@@ -42,9 +43,9 @@ const taskInstances = {
         // Clear red borders
         this.taskNameInput.classList.remove('c-input-field--border-red');
         this.taskCategoryInput.classList.remove('c-input-field--border-red');
+        // sets property to categoriesObj
         if (typeof categoriesObj[capCategory] === 'undefined') {
-          categoriesObj[capCategory] = { addedFocusTime: 0 };
-          console.log(categoriesObj);
+          categoriesObj[capCategory] = { addedFocusTime: 0, goal: 5 };      
         }  
         // Hide wdw
         dynamicHTML.hideSetupWdw(e);
@@ -66,93 +67,43 @@ const taskInstances = {
     return capitalized;
   },
   resetDailyAddFocusTime() {
-
+    const date = new Date();
+    const now = date.getTime();
+    const endOfTheDay = endOfDay(date).getTime();
+    // ms left till end of the day
+    const timeLeft = endOfTheDay - now;  
+    
+    // Resets addedFocusTime values at the end of a day
+    setTimeout(() => {
+      // Get arr of keys for categoriesObj
+      const arrKeys = Object.keys(categoriesObj);
+      arrKeys.forEach(category => {
+        categoriesObj[category]['addedFocusTime'] = 0;
+      });    
+    }, timeLeft);
   },
-  getTaskObjIndex() {
-
+  getTaskObjIndex(e) {      
+    const tasks = document.querySelectorAll('.m-task');    
+    const closestTask = e.target.closest('.m-task');    
+    if (closestTask !== null) {
+      // Finds closestTask in tasks nodeList calling a method from arrays
+      const objIndex = Array.prototype.indexOf.call(tasks, closestTask);      
+      const taskObj = this.taskObjs[objIndex];
+      taskObj.setTime(e.target.classList, closestTask);      
+      taskObj.deleteTask(e.target.classList, tasks, objIndex);
+    }
   },  
 }
 
 taskInstances.init();
+export { taskInstances };
 // Queries
 // const countdownDisplay = document.querySelector('.js-count-down');
 
-
-// const taskObjs = [];
-// // Creates Task obj instances and pushes them to taskObjs array
-// const addTask = (name, category, breakSetup) => {
-  
-//   const taskObj = new Task(name, category, breakSetup, taskObjs.length);
-//   // checks if given category already exists (so it doesn't overwrite the addedFocusTime value)
-
-//   taskObjs.push(taskObj);
-//   const lastTaskObj = taskObjs.length - 1;  
-//   taskObjs[lastTaskObj].addTaskHTML();  
-// }
-
-// const resetDailyAddFocusTime = () => {
-//   const date = new Date();
-//   const now = date.getTime();
-//   const endOfTheDay = endOfDay(date).getTime();
-//   // ms left till end of the day
-//   const timeLeft = endOfTheDay - now;  
-  
-//   // Resets addedFocusTime values at the end of a day
-//   setTimeout(() => {
-//     // Get arr of keys for categoriesObj
-//     const arrKeys = Object.keys(categoriesObj);
-//     arrKeys.forEach(category => {
-//       categoriesObj[category]['addedFocusTime'] = 0;
-//     });    
-//   }, timeLeft);
-// }
 // // Event listeners for the setup-wdw
-// // getSetupWdwInput
-// setupTaskWdw.addEventListener('click', e => {
-//   e.preventDefault();
-//   const targetClassList = e.target.classList;
-  
-//   // Checks if target is ok btn
-//   if (targetClassList.contains('c-setup-wdw__btn-ok')) {
-
-//     const name = document.querySelector('#taskName').value.trim();    
-//     const category = document.querySelector('#taskCategory').value.trim();    
-//     const breakSetup = breakSlider.valueAsNumber;    
-    
-//     // Checks if name and category are not empty
-//     if (name.length !== 0 && category.length !== 0) {
-//       addTask(name, capitalizeCategory(category), breakSetup);
-//       hideSetupWdw(targetClassList); 
-//     } else if (name.length === 0 || category.length === 0) {
-//       console.log('You must choose a name and category');
-//     }
-//   // Checks if target is cancel button
-//   } else if (targetClassList.contains('c-setup-wdw__btn-cancel')){
-//     hideSetupWdw(targetClassList); 
-//   }  
-// });
 
 // // getTaskObjIndex
-// taskContainer.addEventListener('click', e => {
-//   const targetElement = e.target;
-//   const targetClassList = e.target.classList;
-//   const tasks = document.querySelectorAll('.m-task');
-//   // Finds closest m-task class
-//   const closestTask = targetElement.closest('.m-task');
-//   // if closestTask is null then it doesn't do anything
-//   if (closestTask !== null) {
-//     // Gets index of closestTask (.m-task element) from tasks node list making it an arr and using call to use indexOf method
-//     const objIndex = Array.prototype.indexOf.call(tasks, closestTask);        
-//     // Gets an specific obj from taskObjs array. Same index as tasks Node List.
-//     const taskObj = taskObjs[objIndex];
-  
-//     taskObj.countUp(targetClassList, targetElement, closestTask);    
-//     taskObj.setTime(targetClassList, targetElement, closestTask);
-//     taskObj.breakTimer(targetClassList);
-//     taskObj.deleteTask(targetClassList, tasks, objIndex);
-//   }
-// });
-// resetDailyAddFocusTime();
+
 
 // addTaskHTML() {
 //   taskContainer.innerHTML += `

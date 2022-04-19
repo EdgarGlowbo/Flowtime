@@ -1,3 +1,5 @@
+import { format } from "date-fns";
+import { taskInstances } from "./index.js";
 // Classes
 class Task {
   constructor (name, category, breakSetup) {
@@ -11,19 +13,16 @@ class Task {
   // breakDuration = 0;
  
   // Sets start or stoptime
-  setTime(targetClasses, targetElement, parentElement) {
+  setTime(elementClasses, parentElement) {  
     const currentDate = format(new Date(), 'kk:mm');
+    // Queries closestTask
     const dropdownContainer = parentElement.querySelector('.o-task__dropdown');
     let startTimeInput = parentElement.querySelectorAll('.c-task__start-time');
-    const stopTimeInput = parentElement.querySelectorAll('.c-task__stop-time');
-
-    // Gets last element index in startTimeInput node list
+    const stopTimeInput = parentElement.querySelectorAll('.c-task__stop-time');    
     let lastRow = startTimeInput.length - 1;
-
-    if (targetClasses.contains('c-task__btn--is-active')) {      
+    if (elementClasses.contains('c-task__btn--is-active')) {      
       // Checks if startTimeInput is not empty anymore      
-      if (startTimeInput[lastRow].value.length > 0) {
-        
+      if (startTimeInput[lastRow].value.length > 0) {        
         // Adds addtional row of start/stopTime        
         dropdownContainer.innerHTML += `
           <div class="o-task-set-time-container">
@@ -42,18 +41,17 @@ class Task {
         lastRow = startTimeInput.length - 1;
       }      
       startTimeInput[lastRow].setAttribute('value', currentDate);
-    } else if (targetClasses.contains('c-task__btn--is-unactive')) {          
+    } else if (elementClasses.contains('c-task__btn--is-unactive')) {          
       stopTimeInput[lastRow].setAttribute('value', currentDate);
     }    
   }
-
-  deleteTask(targetClasses, tasksNodeList, index) {    
-    if (targetClasses.contains('c-task__delete')) {
+  deleteTask(elementClasses, tasksNodeList, index) {    
+    if (elementClasses.contains('c-task__delete')) {
       const targetTask = tasksNodeList[index];
       // Removes html from targetTask      
       targetTask.remove();
       // Splice method removes 1 element from taskObjs arr starting from current task index
-      taskObjs.splice(this.index, 1);                 
+      taskInstances.taskObjs.splice(this.index, 1);                 
     }    
   }
 }

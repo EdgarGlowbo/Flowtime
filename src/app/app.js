@@ -1,3 +1,4 @@
+  import { taskInstances } from "./index.js";
   const dynamicHTML = {
     init() {
       this.queryDOM();
@@ -17,6 +18,7 @@
         this.hideSetupWdw(e);
         this.displayDropdown(e);
         this.switchCountBtn(e);
+        taskInstances.getTaskObjIndex(e);
       }.bind(this));
       this.addTaskBtn.addEventListener('click', this.showSetupWdw.bind(this));
     }, 
@@ -90,7 +92,6 @@
       this.setupTaskWdw.classList.remove('m-setup-wdw--display-none');      
     }  
   }
-  dynamicHTML.init();  
 
-
+dynamicHTML.init();  
 export { dynamicHTML };
