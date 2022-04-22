@@ -3,6 +3,7 @@ const path = require('path');
 module.exports = {
   mode: 'development',
   entry: {
+    app: './src/app/app.js',
     flowtime: './src/app/index.js',
     history: './src/history/index.js',
   },
@@ -24,6 +25,16 @@ module.exports = {
           "sass-loader",
         ],
       },
+      {
+        test: /\.m?js$/,
+        exclude: /(node_modules|bower_components)/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env']
+          }
+        }
+      }
     ],
   },
   

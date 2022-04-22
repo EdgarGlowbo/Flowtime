@@ -1,5 +1,5 @@
-import "../styles/style.scss"
-import { format, getDay } from 'date-fns'
+import "../styles/style.scss";
+import { format, getDay } from 'date-fns';
 
 // queries
 const calHeader = document.querySelector('.o-cal__header');
@@ -78,7 +78,6 @@ class Calendar {
       this.monthDays += `<div class="c-next-date c-cal__day">${j}</div>`;
       j++;
     }
-
     daysContainer.innerHTML = this.monthDays;        
   }
 }

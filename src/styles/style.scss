@@ -54,10 +54,9 @@
 }
 .c-setup-wdw__btn {
   padding: 5px 20%;
-}
-.c-setup-wdw__btn-cancel{
-  border-left: 1px solid;
-  border-radius: 0px;
+  border-radius: 0;
+  border-top: 0.5px solid black;
+  width: 100%;  
 }
 .l-container__break {
   background-color: $add-task-btn-color;
@@ -113,4 +112,8 @@
 }
 .c-cal__day--six {
   background-color: $color-stage-6;
+}
+.c-input-field--border-red {
+  border-color: $btn-secondary;
+  border-width: 2px;
 }
