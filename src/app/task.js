@@ -17,7 +17,7 @@ class Task {
     let startTimeInput = parentElement.querySelectorAll('.c-task__start-time');
     const stopTimeInput = parentElement.querySelectorAll('.c-task__stop-time');    
     let lastRow = startTimeInput.length - 1;
-    if (elementClasses.contains('c-task__btn--is-active')) {      
+    if (elementClasses.contains('c-task__btn--is-unactive')) {      
       // Checks if startTimeInput is not empty anymore      
       if (startTimeInput[lastRow].value.length > 0) {        
         // Adds addtional row of start/stopTime        
@@ -38,7 +38,7 @@ class Task {
         lastRow = startTimeInput.length - 1;
       }      
       startTimeInput[lastRow].setAttribute('value', currentDate);
-    } else if (elementClasses.contains('c-task__btn--is-unactive')) {          
+    } else if (elementClasses.contains('c-task__btn--is-active')) {          
       stopTimeInput[lastRow].setAttribute('value', currentDate);
     }    
   }

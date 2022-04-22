@@ -25,29 +25,30 @@
   flex-direction: column;
 }
 .o-task__display {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(12, calc(320px / 12));
   margin: 5px;
+  align-items: center;
 }
 .c-task__name {
-  flex-basis: 60%;
+  grid-column: 1 / span 5;
 }
 .o-task__dropdown {
   display: flex;
   flex-direction: column;
   margin: 5px;
 }
-.o-task__start-time, .o-task__stop-time {
+.o-task__start-time, .o-task__stop-time {  
   display: flex;
   flex-basis: content;
   align-items: center;
+  margin: 3px;
 }
 .c-input-field {
   width: 50%;
 }
 .c-category-btn {
-  flex-basis: 30%;
+  grid-column: 6 / span 3;
 }
 .c-task__dropdown-arrow {
   flex-basis: 15%;
@@ -111,10 +112,12 @@
 }
 .c-task__btn {
   margin: 3px;
+  grid-column: 9 / span 2;
 }
 .o-task-set-time-container {
-  display: flex;
+  display: grid;
   margin: 3px;
+  grid-template-columns: repeat(9, calc(314px/9));
 }
 
 .l-container__header {
@@ -144,7 +147,7 @@
   margin-bottom: 5px;
 }
 .c-task__delete {
-  height: 32px;
+  height: 32px;  
 }
 .c-btn--no-margin {
   margin: 0;
@@ -221,4 +224,23 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.c-task__count-up {
+  padding: 2px;
+  grid-column: 11 / span 2;
+  text-align: center;
+}
+.c-task__delete-btn {
+  grid-column: 9 / span 1;
+  margin: 3px;
+  align-self: center;
+}
+.o-task__start-time {
+  grid-column: 1 / span 4;
+}
+.o-task__stop-time {
+  grid-column: 5 / span 4;
+}
+.c-task__label {
+  flex-grow: 1;
 }
