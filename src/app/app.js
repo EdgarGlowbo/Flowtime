@@ -16,9 +16,8 @@
       this.breakSlider.addEventListener('change', this.changeSliderText.bind(this));
       this.taskContainer.addEventListener('click', function(e) {
         this.hideSetupWdw(e);
-        this.displayDropdown(e);
-        this.switchCountBtn(e);
-        taskInstances.getTaskObjIndex(e);
+        this.displayDropdown(e);        
+        taskInstances.getTaskObjIndex(e); 
       }.bind(this));
       this.addTaskBtn.addEventListener('click', this.showSetupWdw.bind(this));
     }, 
@@ -73,19 +72,17 @@
         }
       }
     },
-    switchCountBtn (e) {
-      const elementClasses = e.target.classList;
-      // Switch stop/start buttons
+    switchCountBtn (elementClasses, obj, e) {          
       // Is running
-      if (elementClasses.contains('c-task__btn--is-active')) {
+      if (obj.isActive) {
         elementClasses.remove('c-task__btn--is-active');
         elementClasses.add('c-task__btn--is-unactive');
-        e.target.textContent = 'Start';
+        e.target.textContent = 'Start';      
       // Stopped
-      } else if (elementClasses.contains('c-task__btn--is-unactive')) {
+      } else {
         elementClasses.remove('c-task__btn--is-unactive');
         elementClasses.add('c-task__btn--is-active');
-        e.target.textContent = 'Stop';
+        e.target.textContent = 'Stop';        
       }
     },
     showSetupWdw() {      

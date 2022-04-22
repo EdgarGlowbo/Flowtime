@@ -6,12 +6,9 @@ class Task {
     this.name = name;
     this.category = category;
     this.breakSetup = breakSetup;    
-  }
-  focusTime = 0;
-  intervalID;
-  // breakIntervalID;
-  // breakDuration = 0;
- 
+  }  
+  isActive = false;  
+
   // Sets start or stoptime
   setTime(elementClasses, parentElement) {  
     const currentDate = format(new Date(), 'kk:mm');
