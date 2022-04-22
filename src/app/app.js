@@ -72,18 +72,20 @@
         }
       }
     },
-    switchCountBtn (elementClasses, obj, e) {          
-      // Is running
-      if (obj.isActive) {
-        elementClasses.remove('c-task__btn--is-active');
-        elementClasses.add('c-task__btn--is-unactive');
-        e.target.textContent = 'Start';      
-      // Stopped
-      } else {
-        elementClasses.remove('c-task__btn--is-unactive');
-        elementClasses.add('c-task__btn--is-active');
-        e.target.textContent = 'Stop';        
-      }
+    switchCountBtn (elementClasses, obj, e) {
+      if (elementClasses.contains('c-task__btn')) {
+        // Is running
+        if (obj.isActive) {
+          elementClasses.remove('c-task__btn--is-active');
+          elementClasses.add('c-task__btn--is-unactive');
+          e.target.textContent = 'Start';      
+        // Stopped
+        } else {
+          elementClasses.remove('c-task__btn--is-unactive');
+          elementClasses.add('c-task__btn--is-active');
+          e.target.textContent = 'Stop';        
+        }
+      }      
     },
     showSetupWdw() {      
       this.setupTaskWdw.classList.remove('m-setup-wdw--display-none');      

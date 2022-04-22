@@ -6,7 +6,8 @@ import { Task, categoriesObj } from "./task.js";
 const taskInstances = {
   taskObjs: [],
   breakDuration: 0,
-  focusTime: 0,    
+  focusTime: 0,
+  timePassed: 0,    
   init() {
     this.queryDOM();
     this.bindEvents();
@@ -119,7 +120,7 @@ const taskInstances = {
             countUpElement
               .innerHTML = `0${h}`.slice(-2) + ':' + `0${m}`.slice(-2) + ':' + `0${s}`.slice(-2);          
           }          
-        }, 1000);
+        }, 200);
         obj.isActive = true;        
       } else {
         clearInterval(this.intervalID);        
@@ -130,32 +131,36 @@ const taskInstances = {
     }              
   },
   breakTimer(obj, elementClasses) {
-    if (elementClasses.contains('c-task__btn')) {
+    if (elementClasses.contains('c-task__btn')) {      
       if (obj.isActive) {
-        this.breakDuration += Math.ceil(this.focusTime / obj.breakSetup);                  
+        this.breakDuration += Math.ceil(this.focusTime / obj.breakSetup);;                          
         let dateBreakDuration = new Date(this.breakDuration);
         let m = dateBreakDuration.getMinutes();
         let s = dateBreakDuration.getSeconds();
         let h = Math.floor(this.breakDuration / 3600000);      
         this.breakDisplay.textContent = h > 0 ?  `0${h}`.slice(-2) + ':' + `0${m}`.slice(-2) + ':' + `0${s}`.slice(-2) : `0${m}`.slice(-2) + ':' + `0${s}`.slice(-2);  
         // Interval updates timer to countdown
-        this.breakIntervalID = setInterval(() => {   
-          this.breakDuration = this.breakDuration - 1000;
-          dateBreakDuration = new Date(this.breakDuration);    
+        const then = new Date().getTime();
+        this.breakIntervalID = setInterval(() => {
+          const now = new Date().getTime();
+          this.timePassed = now - then;
+          const timeLeft = this.breakDuration - this.timePassed;
+          dateBreakDuration = new Date(timeLeft);    
           m = dateBreakDuration.getMinutes();
           s = dateBreakDuration.getSeconds();
-          h = Math.floor(this.breakDuration / 3600000);          
+          h = Math.floor(timeLeft / 3600000);          
           this.breakDisplay.textContent = h > 0 ?  `0${h}`.slice(-2) + ':' + `0${m}`.slice(-2) + ':' + `0${s}`.slice(-2) : `0${m}`.slice(-2) + ':' + `0${s}`.slice(-2);;  
           // Stops count down to avoid negative values
-          if (this.breakDuration <= 0) {
+          if (timeLeft <= 0) {
             clearInterval(this.breakIntervalID);
             this.breakDuration = 0;                
             this.breakDisplay.textContent = '00:00';          
           }        
-        }, 1000)        
+        }, 200)        
       } else {
         // Pause countdown when task starts (focusTime)
-        clearInterval(this.breakIntervalID);      
+        clearInterval(this.breakIntervalID);
+        this.breakDuration -= this.timePassed;        
       }
     }    
   }
