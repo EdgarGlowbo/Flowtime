@@ -6,6 +6,7 @@ module.exports = {
     app: './src/app/app.js',
     flowtime: './src/app/index.js',
     history: './src/history/index.js',
+    goal: './src/history/goal.js'
   },
 
   output: {

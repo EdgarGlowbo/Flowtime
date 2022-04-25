@@ -22,6 +22,7 @@
   "homepage": "https://github.com/EdgarGlowbo/Flowtime#readme",
   "dependencies": {
     "date-fns": "^2.28.0",
+    "firebase": "^9.6.11",
     "webpack-cli": "^4.9.2"
   },
   "devDependencies": {

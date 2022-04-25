@@ -1,18 +1,8 @@
 import "../styles/style.scss";
 import { format, getDay } from 'date-fns';
 
-// queries
-const calHeader = document.querySelector('.o-cal__header');
-const monthHeader = document.querySelector('.c-month');
-const currentDateHeader = document.querySelector('.c-current-date');
-const daysContainer = document.querySelector('.o-cal__days');
-
-
-class Calendar {
-  constructor(date) {
-    this.date = date;
-  }
-  monthsArr = [
+const calendar = {
+  monthsArr: [
     "January",
     "February",
     "March",
@@ -25,27 +15,40 @@ class Calendar {
     "October",
     "November",
     "December"
-  ];
-  monthDays = "";
-   
-
+  ],
+  date: new Date(),
+  init() {
+    this.queryDOM();
+    this.bindEvents();
+    this.renderCal();
+  },  
+  queryDOM() {
+    this.calContainer = document.querySelector('.m-cal');
+    this.calHeader = this.calContainer.querySelector('.o-cal__header');
+    this.currDate = this.calHeader.querySelector('.c-current-date');
+    this.monthHeader = this.calHeader.querySelector('.c-month');
+    this.daysContainer = this.calContainer.querySelector('.o-cal__days');
+  },
+  bindEvents() {
+    this.calContainer.addEventListener('click', this.switchMonth.bind(this));
+  },
   displayMonth() {
     const year = this.date.getFullYear();
     const monthIndex = this.date.getMonth();
-    monthHeader.textContent = this.monthsArr[monthIndex] + " " + year;    
-  }
+    this.monthHeader.textContent = this.monthsArr[monthIndex] + " " + year;    
+  },
   displayCurrentDate () {
     const todayDate = new Date();
     const fullDate = format(todayDate, 'PPPP');
-    currentDateHeader.textContent = fullDate;    
-  }
+    this.currDate.textContent = fullDate;
+  },
   displayMonthDays() {
+    let monthDays = "";
     const firstDayDate = new Date (
       this.date.getFullYear(),
       this.date.getMonth(),
       1
-    );    
-    
+    );        
     const lastDayDate = new Date (
       this.date.getFullYear(), 
       this.date.getMonth() + 1, 
@@ -64,41 +67,37 @@ class Calendar {
     ).getDate();    
     // Adds previous days of previous month if weekDayIndex from the 1st isn't 0 (or sunday)
     for (let i = previousMonthLastDay - firstWeekDayIndex; i < previousMonthLastDay; i++) {
-      this.monthDays += `<div class="c-prev-date c-cal__day">${i + 1}</div>`;
+      monthDays += `<div class="c-prev-date c-cal__day">${i + 1}</div>`;
     }
     
     // Displays days of the month from 1 to lastDay
     for (let i = 0; i < lastDay; i++) {
-      this.monthDays += `<div class="c-cal__day">${i + 1}</div>`;      
+      monthDays += `<div class="c-cal__day">${i + 1}</div>`;      
     }
 
     // Adds next days if lastWeekDayIndex < 6 (or saturday)
     let j = 1;
     for (let i = lastWeekDayIndex; i < 6; i++) {      
-      this.monthDays += `<div class="c-next-date c-cal__day">${j}</div>`;
+      monthDays += `<div class="c-next-date c-cal__day">${j}</div>`;
       j++;
     }
-    daysContainer.innerHTML = this.monthDays;        
+    this.daysContainer.innerHTML = monthDays;        
+  },
+  renderCal() {  
+    this.displayMonth();
+    this.displayCurrentDate();
+    this.displayMonthDays();
+  },
+  switchMonth(e) {
+    const elementClasses = e.target.classList;
+    if (elementClasses.contains('c-cal__arrow-right') || elementClasses.contains('c-icon__arrow-right')) {  
+      this.date.setMonth(this.date.getMonth() + 1);       
+      this.renderCal();
+    } else if (elementClasses.contains('c-cal__arrow-left') || elementClasses.contains('c-icon__arrow-left')) {
+      this.date.setMonth(this.date.getMonth() - 1);      
+      this.renderCal();
+    }
   }
 }
-const date = new Date();
-calHeader.addEventListener('click', e => {  
-  const targetClasses = e.target.classList;
-  
-  if (targetClasses.contains('c-cal__arrow-right') || targetClasses.contains('c-icon__arrow-right')) {  
-    date.setMonth(date.getMonth() + 1);       
-    renderCal();
-  } else if (targetClasses.contains('c-cal__arrow-left') || targetClasses.contains('c-icon__arrow-left')) {
-    date.setMonth(date.getMonth() - 1);      
-    renderCal();
-  }   
-});
 
-// Runs at start
-const renderCal = () => {  
-  const calendar = new Calendar(date);
-  calendar.displayMonth();
-  calendar.displayCurrentDate();
-  calendar.displayMonthDays();
-}
-renderCal();
+calendar.init();
