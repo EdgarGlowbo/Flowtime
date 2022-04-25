@@ -94,7 +94,7 @@ const taskInstances = {
       const objIndex = Array.prototype.indexOf.call(tasks, closestTask);      
       const taskObj = this.taskObjs[objIndex];
       taskObj.setTime(e.target.classList, closestTask);      
-      taskObj.deleteTask(e.target.classList, tasks, objIndex);
+      this.deleteTask(e.target.classList, tasks, objIndex);
       dynamicHTML.switchCountBtn(e.target.classList, taskObj, e);
       this.breakTimer(taskObj, e.target.classList);
       this.countUp(e.target.classList, closestTask, taskObj);      
@@ -153,15 +153,26 @@ const taskInstances = {
           // Stops count down to avoid negative values
           if (timeLeft <= 0) {
             clearInterval(this.breakIntervalID);
-            this.breakDuration = 0;                
+            this.breakDuration = 0;
+            this.timePassed = 0;                
             this.breakDisplay.textContent = '00:00';          
           }        
         }, 200)        
       } else {
         // Pause countdown when task starts (focusTime)
         clearInterval(this.breakIntervalID);
-        this.breakDuration -= this.timePassed;        
+        this.breakDuration -= this.timePassed;
+        this.timePassed = 0;        
       }
+    }    
+  },
+  deleteTask(elementClasses, tasksNodeList, index) {    
+    if (elementClasses.contains('c-task__delete')) {
+      const targetTask = tasksNodeList[index];
+      // Removes html from targetTask      
+      targetTask.remove();
+      // Splice method removes 1 element from taskObjs arr starting from current task index
+      this.taskObjs.splice(this.index, 1);                 
     }    
   }
 }

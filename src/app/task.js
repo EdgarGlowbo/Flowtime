@@ -1,5 +1,4 @@
 import { format } from "date-fns";
-import { taskInstances } from "./index.js";
 // Classes
 class Task {
   constructor (name, category, breakSetup) {
@@ -41,16 +40,7 @@ class Task {
     } else if (elementClasses.contains('c-task__btn--is-active')) {          
       stopTimeInput[lastRow].setAttribute('value', currentDate);
     }    
-  }
-  deleteTask(elementClasses, tasksNodeList, index) {    
-    if (elementClasses.contains('c-task__delete')) {
-      const targetTask = tasksNodeList[index];
-      // Removes html from targetTask      
-      targetTask.remove();
-      // Splice method removes 1 element from taskObjs arr starting from current task index
-      taskInstances.taskObjs.splice(this.index, 1);                 
-    }    
-  }
+  }  
 }
 const categoriesObj = new Object();
 
