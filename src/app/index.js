@@ -1,17 +1,42 @@
+import 'regenerator-runtime/runtime';
 import "../styles/style.scss";
 import { endOfDay } from 'date-fns';
 import { dynamicHTML } from "./app.js";
 import { Task, categoriesObj } from "./task.js";
 
+import { initializeApp } from "firebase/app";
+import { 
+    getFirestore, collection, addDoc,    
+  } 
+from "firebase/firestore";
+import { getAuth,  signInAnonymously } from "firebase/auth";
+const firebaseConfig = {
+  apiKey: "AIzaSyCwUJfVaRIommAPOtOH1_1ki8v7PzjDKqE",
+  authDomain: "flowtime-5eb6c.firebaseapp.com",
+  projectId: "flowtime-5eb6c",
+  storageBucket: "flowtime-5eb6c.appspot.com",
+  messagingSenderId: "702197938017",
+  appId: "1:702197938017:web:bf2b96491eb626599b7720"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth();
+
+
+
 const taskInstances = {
   taskObjs: [],
   breakDuration: 0,
   focusTime: 0,
-  timePassed: 0,    
+  timePassed: 0,  
+
   init() {
     this.queryDOM();
     this.bindEvents();
     this.resetDailyAddFocusTime();
+    this.createUserDoc();
   },
   bindEvents() {
     dynamicHTML.setupTaskWdw.addEventListener('click', this.addTask.bind(this));    
@@ -40,6 +65,7 @@ const taskInstances = {
         const capCategory = this.capitalize(category);
         // Creates Task object instance 
         const taskObj = new Task(capName, capCategory, breakSetup, this.taskObjs.length);
+        this.taskToDB(taskObj);
         this.taskObjs.push(taskObj);
         taskNameQ.textContent = capName;
         taskCategoryQ.textContent = capCategory;   
@@ -174,6 +200,23 @@ const taskInstances = {
       // Splice method removes 1 element from taskObjs arr starting from current task index
       this.taskObjs.splice(this.index, 1);                 
     }    
+  },
+  createUserDoc() {
+    signInAnonymously(auth)
+      .then((data) => {    
+        taskInstances.userID = data.user.uid;
+        this.tasksColRef = collection(db, "users", this.userID, "tasks");          
+        this.goalsColRef = collection(db, "users", this.userID, "goals");          
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorMessage);
+      });    
+  },
+  async taskToDB(obj) {
+    const docRef = await addDoc(this.tasksColRef, JSON.parse( JSON.stringify(obj)));
+    console.log(docRef.data);
   }
 }
 taskInstances.init();

@@ -1,6 +1,7 @@
 import "../styles/style.scss";
 import { format, getDay } from 'date-fns';
 
+
 const calendar = {
   monthsArr: [
     "January",
@@ -20,7 +21,7 @@ const calendar = {
   init() {
     this.queryDOM();
     this.bindEvents();
-    this.renderCal();
+    this.renderCal();    
   },  
   queryDOM() {
     this.calContainer = document.querySelector('.m-cal');
