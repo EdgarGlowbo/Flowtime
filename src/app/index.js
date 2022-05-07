@@ -2,14 +2,16 @@ import 'regenerator-runtime/runtime';
 import "../styles/style.scss";
 import { endOfDay } from 'date-fns';
 import { dynamicHTML } from "./app.js";
-import { Task, categoriesObj } from "./task.js";
+import { Task } from "./task.js";
 
 import { initializeApp } from "firebase/app";
 import { 
-    getFirestore, collection, addDoc,    
+    getFirestore, collection, addDoc,
+    deleteDoc, doc, getDoc, getDocs,
+    setDoc,    
   } 
 from "firebase/firestore";
-import { getAuth,  signInAnonymously } from "firebase/auth";
+import { getAuth, signInAnonymously } from "firebase/auth";
 const firebaseConfig = {
   apiKey: "AIzaSyCwUJfVaRIommAPOtOH1_1ki8v7PzjDKqE",
   authDomain: "flowtime-5eb6c.firebaseapp.com",
@@ -36,7 +38,7 @@ const taskInstances = {
     this.queryDOM();
     this.bindEvents();
     this.resetDailyAddFocusTime();
-    this.createUserDoc();
+    this.createUserDoc();    
   },
   bindEvents() {
     dynamicHTML.setupTaskWdw.addEventListener('click', this.addTask.bind(this));    
@@ -64,7 +66,7 @@ const taskInstances = {
         const capName = this.capitalize(name);
         const capCategory = this.capitalize(category);
         // Creates Task object instance 
-        const taskObj = new Task(capName, capCategory, breakSetup, this.taskObjs.length);
+        const taskObj = new Task(capName, capCategory, breakSetup);
         this.taskToDB(taskObj);
         this.taskObjs.push(taskObj);
         taskNameQ.textContent = capName;
@@ -74,8 +76,8 @@ const taskInstances = {
         this.taskNameInput.classList.remove('c-input-field--border-red');
         this.taskCategoryInput.classList.remove('c-input-field--border-red');
         // sets property to categoriesObj
-        if (typeof categoriesObj[capCategory] === 'undefined') {
-          categoriesObj[capCategory] = { addedFocusTime: 0, goal: 300000 };      
+        if (typeof this.categoriesObj[capCategory] === 'undefined') {
+          this.categoriesObj[capCategory] = { addedFocusTime: 0, goal: 300000 };      
         }  
         // Hide wdw
         dynamicHTML.hideSetupWdw(e);
@@ -106,9 +108,9 @@ const taskInstances = {
     // Resets addedFocusTime values at the end of a day
     setTimeout(() => {
       // Get arr of keys for categoriesObj
-      const arrKeys = Object.keys(categoriesObj);
+      const arrKeys = Object.keys(this.categoriesObj);
       arrKeys.forEach(category => {
-        categoriesObj[category]['addedFocusTime'] = 0;
+        this.categoriesObj[category]['addedFocusTime'] = 0;
       });    
     }, timeLeft);
   },
@@ -150,8 +152,8 @@ const taskInstances = {
         obj.isActive = true;        
       } else {
         clearInterval(this.intervalID);        
-        countUpElement.innerHTML = '00:00';            
-        categoriesObj[obj.category]['addedFocusTime'] += this.focusTime;
+        countUpElement.innerHTML = '00:00';        
+        this.categoriesObj[obj.category]['addedFocusTime'] += this.focusTime;
         obj.isActive = false;  
       }               
     }              
@@ -192,21 +194,29 @@ const taskInstances = {
       }
     }    
   },
-  deleteTask(elementClasses, tasksNodeList, index) {    
+  async deleteTask(elementClasses, tasksNodeList, index) {    
     if (elementClasses.contains('c-task__delete')) {
       const targetTask = tasksNodeList[index];
       // Removes html from targetTask      
       targetTask.remove();
-      // Splice method removes 1 element from taskObjs arr starting from current task index
-      this.taskObjs.splice(this.index, 1);                 
+      // Removes task from db
+      const taskID = this.taskObjs[index].id;
+      console.log(taskID);
+      const docRef = doc(db, "users", this.userID, "tasks", taskID);
+      console.log(docRef);
+      await deleteDoc(docRef);      
+      // Splice method removes 1 element from taskObjs arr starting from current task index      
+      this.taskObjs.splice(index, 1);           
     }    
   },
   createUserDoc() {
     signInAnonymously(auth)
-      .then((data) => {    
+      .then((data) => {
+        // add userID prop and set uid from anon auth  
         taskInstances.userID = data.user.uid;
         this.tasksColRef = collection(db, "users", this.userID, "tasks");          
-        this.goalsColRef = collection(db, "users", this.userID, "goals");          
+        this.goalsColRef = collection(db, "users", this.userID, "goals"); 
+        this.retrieveTasks();         
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -215,8 +225,42 @@ const taskInstances = {
       });    
   },
   async taskToDB(obj) {
-    const docRef = await addDoc(this.tasksColRef, JSON.parse( JSON.stringify(obj)));
-    console.log(docRef.data);
+    const docRef = await addDoc(this.tasksColRef, JSON.parse(JSON.stringify(obj)));
+    const docSnap = await getDoc(docRef);
+    // Saves categoriesObj every addTask event
+    await setDoc(doc(db, "users", this.userID, "goals", "categoriesObj"), this.categoriesObj);
+    if (docSnap.exists()) {
+      obj.id = docSnap.id;
+    } else {      
+      console.log("No such document!");
+    }    
+  },
+  async retrieveTasks() {
+    const querySnapshot = await getDocs(this.tasksColRef);
+      querySnapshot.forEach((doc) => {             
+        this.addTaskFromDB(doc.data(), doc.id);
+      });
+    // Sets categoriesObj equal to the one in db
+    const docSnap = await getDoc(doc(db, "users", this.userID, "goals", "categoriesObj"));
+    if (docSnap.exists()) {
+      this.categoriesObj = JSON.parse(JSON.stringify(docSnap.data()));
+    } else {      
+      console.log("No such document!");
+    } 
+  },
+  addTaskFromDB(taskData, docID) {
+    // Creates task template      
+    const taskTemplate = document.importNode(this.temp1, true);
+    // Name and task queries
+    const taskNameQ = taskTemplate.querySelector('.c-task__name');
+    const taskCategoryQ = taskTemplate.querySelector('.c-category-btn');
+    const taskObj = new Task(taskData.name, taskData.category, taskData.breakSetup);
+    taskObj.id = docID;
+    console.log(taskObj);
+    this.taskObjs.push(taskObj);
+    taskNameQ.textContent = taskObj.name;
+    taskCategoryQ.textContent = taskObj.category;
+    dynamicHTML.taskContainer.appendChild(taskTemplate);
   }
 }
 taskInstances.init();
