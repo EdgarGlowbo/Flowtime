@@ -33,12 +33,12 @@ const taskInstances = {
   breakDuration: 0,
   focusTime: 0,
   timePassed: 0,  
-
   init() {
     this.queryDOM();
     this.bindEvents();
     this.resetDailyAddFocusTime();
-    this.createUserDoc();    
+    this.createUserDoc();
+    this.breakCountdown(localStorage.getItem('then'), localStorage.getItem('breakDuration'));
   },
   bindEvents() {
     dynamicHTML.setupTaskWdw.addEventListener('click', this.addTask.bind(this));    
@@ -158,35 +158,21 @@ const taskInstances = {
       }               
     }              
   },
-  breakTimer(obj, elementClasses) {
+  breakTimer(obj, elementClasses) {     
     if (elementClasses.contains('c-task__btn')) {      
-      if (obj.isActive) {
-        this.breakDuration += Math.ceil(this.focusTime / obj.breakSetup);;                          
-        let dateBreakDuration = new Date(this.breakDuration);
-        let m = dateBreakDuration.getMinutes();
-        let s = dateBreakDuration.getSeconds();
-        let h = Math.floor(this.breakDuration / 3600000);      
+      if (obj.isActive) {        
+        this.breakDuration += Math.ceil(this.focusTime / obj.breakSetup);
+        localStorage.setItem('breakDuration', this.breakDuration);
+        const dateBreakDuration = new Date(this.breakDuration);
+        const m = dateBreakDuration.getMinutes();
+        const s = dateBreakDuration.getSeconds();
+        const h = Math.floor(this.breakDuration / 3600000);      
         this.breakDisplay.textContent = h > 0 ?  `0${h}`.slice(-2) + ':' + `0${m}`.slice(-2) + ':' + `0${s}`.slice(-2) : `0${m}`.slice(-2) + ':' + `0${s}`.slice(-2);  
         // Interval updates timer to countdown
         const then = new Date().getTime();
-        this.breakIntervalID = setInterval(() => {
-          const now = new Date().getTime();
-          this.timePassed = now - then;
-          const timeLeft = this.breakDuration - this.timePassed;
-          dateBreakDuration = new Date(timeLeft);    
-          m = dateBreakDuration.getMinutes();
-          s = dateBreakDuration.getSeconds();
-          h = Math.floor(timeLeft / 3600000);          
-          this.breakDisplay.textContent = h > 0 ?  `0${h}`.slice(-2) + ':' + `0${m}`.slice(-2) + ':' + `0${s}`.slice(-2) : `0${m}`.slice(-2) + ':' + `0${s}`.slice(-2);;  
-          // Stops count down to avoid negative values
-          if (timeLeft <= 0) {
-            clearInterval(this.breakIntervalID);
-            this.breakDuration = 0;
-            this.timePassed = 0;                
-            this.breakDisplay.textContent = '00:00';          
-          }        
-        }, 200)        
-      } else {
+        localStorage.setItem('then', then);
+        this.breakCountdown(then, this.breakDuration);
+      } else {        
         // Pause countdown when task starts (focusTime)
         clearInterval(this.breakIntervalID);
         this.breakDuration -= this.timePassed;
@@ -200,10 +186,8 @@ const taskInstances = {
       // Removes html from targetTask      
       targetTask.remove();
       // Removes task from db
-      const taskID = this.taskObjs[index].id;
-      console.log(taskID);
-      const docRef = doc(db, "users", this.userID, "tasks", taskID);
-      console.log(docRef);
+      const taskID = this.taskObjs[index].id;      
+      const docRef = doc(db, "users", this.userID, "tasks", taskID);      
       await deleteDoc(docRef);      
       // Splice method removes 1 element from taskObjs arr starting from current task index      
       this.taskObjs.splice(index, 1);           
@@ -213,7 +197,7 @@ const taskInstances = {
     signInAnonymously(auth)
       .then((data) => {
         // add userID prop and set uid from anon auth  
-        taskInstances.userID = data.user.uid;
+        taskInstances.userID = data.user.uid;        
         this.tasksColRef = collection(db, "users", this.userID, "tasks");          
         this.goalsColRef = collection(db, "users", this.userID, "goals"); 
         this.retrieveTasks();         
@@ -255,12 +239,35 @@ const taskInstances = {
     const taskNameQ = taskTemplate.querySelector('.c-task__name');
     const taskCategoryQ = taskTemplate.querySelector('.c-category-btn');
     const taskObj = new Task(taskData.name, taskData.category, taskData.breakSetup);
-    taskObj.id = docID;
-    console.log(taskObj);
+    taskObj.id = docID;    
     this.taskObjs.push(taskObj);
     taskNameQ.textContent = taskObj.name;
     taskCategoryQ.textContent = taskObj.category;
     dynamicHTML.taskContainer.appendChild(taskTemplate);
+  },
+  breakCountdown(then, breakDuration) {
+    this.breakIntervalID = setInterval(() => {
+      if (typeof then !== 'undefined') {
+        const now = new Date().getTime();
+        this.timePassed = now - then;        
+        const timeLeft = breakDuration - this.timePassed;
+        // Stops count down to avoid negative values
+        if (timeLeft <= 0) {            
+          clearInterval(this.breakIntervalID);
+          this.breakDuration = 0;
+          this.timePassed = 0;                
+          this.breakDisplay.textContent = '00:00';
+          localStorage.removeItem('then');
+          localStorage.removeItem('breakDuration');
+        } else {
+          const dateBreakDuration = new Date(timeLeft);    
+          const m = dateBreakDuration.getMinutes();
+          const s = dateBreakDuration.getSeconds();
+          const h = Math.floor(timeLeft / 3600000);          
+          this.breakDisplay.textContent = h > 0 ?  `0${h}`.slice(-2) + ':' + `0${m}`.slice(-2) + ':' + `0${s}`.slice(-2) : `0${m}`.slice(-2) + ':' + `0${s}`.slice(-2);
+        }
+      }  
+    }, 200);      
   }
 }
 taskInstances.init();

@@ -102,3 +102,5 @@ const calendar = {
 }
 
 calendar.init();
+
+export { calendar }
