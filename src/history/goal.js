@@ -25,7 +25,8 @@ const history = {
   init() {
     this.createUserDoc();
     this.queryDOM();
-    this.bindEvents();    
+    this.bindEvents();
+    
   },
   queryDOM() {
     this.categoryPanel = document.querySelector('.l-container__category-panel');
@@ -49,6 +50,7 @@ const history = {
     }
     this.categories = Object.keys(this.categoriesObj);
     this.showCategory(); // updates category btn to show first category
+    this.calcGoalCompletion();
   },
   createUserDoc() {
     signInAnonymously(auth)
@@ -76,27 +78,44 @@ const history = {
     }
     this.showCategory(this.i);         
   },
-  showCategory(i = 0) {
-    const chosenCategory = this.categories[i];     
-    const goal = this.categoriesObj[chosenCategory].goal;
-    this.categoryBtn.textContent = chosenCategory;    
-    this.dailyGoalInput.value = (goal / 60000); 
+  showCategory(i = 0) {    
+    if (typeof this.categories[i] !== 'undefined') {
+      const chosenCategory = this.categories[i];
+      const goal = this.categoriesObj[chosenCategory].goal;
+      this.categoryBtn.textContent = chosenCategory;    
+      this.dailyGoalInput.value = (goal / 60000); 
+    } else {
+      this.categoryBtn.textContent = 'No category';    
+      this.dailyGoalInput.value = 0; 
+    }    
   },
   updateGoal() {
     const currCategory = this.categoriesObj[this.categories[this.i]]; // Access to current category (key) displayed from categoriesObj
     currCategory.goal = (this.dailyGoalInput.value) * 60000;
-    updateDoc(this.catObjRef, { [this.categories[this.i]]: { goal: currCategory.goal }})     
+    // updateDoc(this.catObjRef, { [this.categories[this.i]]: { "addedFocusTime": currCategory.addedFocusTime, "goal": currCategory.goal }});
+    // updateDoc(this.catObjRef, {[this.categories[this.i]]["goal"]: currCategory.goal}); 
+    console.log(currCategory);
   },
   async deleteCategory(e) {
     if (e.target.classList.contains('c-delete-category-btn')) {
       const categoryKey = this.categories[this.i];      
-      this.categories.splice(this.i);
-      delete this.categoriesObj[categoryKey];
+      this.categories.splice(this.i); // deletes element from categories array (display tag)
+      delete this.categoriesObj[categoryKey]; // deletes property from categoriesObj ()
       const docRef = doc(db, "users", this.userID, "goals", "categoriesObj");
       await updateDoc(docRef, {
-        [categoryKey]: deleteField()
+        [categoryKey]: deleteField() // deletes from db
       })
+      this.showCategory(); // displays first category or no category
     }
+  },
+  calcGoalCompletion() {
+    
+    const currCategory = this.categoriesObj[this.categories[this.i]]; // Access to current category (key) displayed from categoriesObj
+    console.log(currCategory);
+    const goal = currCategory.goal;
+    const focusTime = currCategory.addedFocusTime;
+    const quotient = focusTime / goal;
+    console.log(focusTime, " / ", goal, " = ", quotient);
   }
 }
 

@@ -8,7 +8,8 @@ import { initializeApp } from "firebase/app";
 import { 
     getFirestore, collection, addDoc,
     deleteDoc, doc, getDoc, getDocs,
-    setDoc,    
+    setDoc,
+    updateDoc,    
   } 
 from "firebase/firestore";
 import { getAuth, signInAnonymously } from "firebase/auth";
@@ -32,7 +33,8 @@ const taskInstances = {
   taskObjs: [],
   breakDuration: 0,
   focusTime: 0,
-  timePassed: 0,  
+  timePassed: 0,
+  
   init() {
     this.queryDOM();
     this.bindEvents();
@@ -77,7 +79,7 @@ const taskInstances = {
         this.taskCategoryInput.classList.remove('c-input-field--border-red');
         // sets property to categoriesObj
         if (typeof this.categoriesObj[capCategory] === 'undefined') {
-          this.categoriesObj[capCategory] = { addedFocusTime: 0, goal: 300000 };      
+          this.categoriesObj[capCategory] = { addedFocusTime: 0, goal: 300000, startDate: new Date() };      
         }  
         // Hide wdw
         dynamicHTML.hideSetupWdw(e);
@@ -106,6 +108,7 @@ const taskInstances = {
     const timeLeft = endOfTheDay - now;  
     
     // Resets addedFocusTime values at the end of a day
+    // goal completion calculation to-do
     setTimeout(() => {
       // Get arr of keys for categoriesObj
       const arrKeys = Object.keys(this.categoriesObj);
@@ -154,6 +157,7 @@ const taskInstances = {
         clearInterval(this.intervalID);        
         countUpElement.innerHTML = '00:00';        
         this.categoriesObj[obj.category]['addedFocusTime'] += this.focusTime;
+        this.updateFocusTimeDB(obj);
         obj.isActive = false;  
       }               
     }              
@@ -268,6 +272,11 @@ const taskInstances = {
         }
       }  
     }, 200);      
+  },
+  updateFocusTimeDB(obj) {
+    this.catObjRef = doc(db, "users", this.userID, "goals", "categoriesObj");
+    const currCategory = this.categoriesObj[obj.category];
+    updateDoc(this.catObjRef, { [obj.category]: { "addedFocusTime": currCategory.addedFocusTime, "goal": currCategory.goal }});      
   }
 }
 taskInstances.init();
