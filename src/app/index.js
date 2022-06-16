@@ -1,6 +1,6 @@
 import 'regenerator-runtime/runtime';
 import "../styles/style.scss";
-import { endOfDay } from 'date-fns';
+import { endOfDay, getYear, getMonth, getDate } from 'date-fns';
 import { dynamicHTML } from "./app.js";
 import { Task } from "./task.js";
 
@@ -37,9 +37,9 @@ const taskInstances = {
   
   init() {
     this.queryDOM();
-    this.bindEvents();
-    this.resetDailyAddFocusTime();
+    this.bindEvents();    
     this.createUserDoc();
+    this.dailyReset();
     this.breakCountdown(localStorage.getItem('then'), localStorage.getItem('breakDuration'));
   },
   bindEvents() {
@@ -79,7 +79,18 @@ const taskInstances = {
         this.taskCategoryInput.classList.remove('c-input-field--border-red');
         // sets property to categoriesObj
         if (typeof this.categoriesObj[capCategory] === 'undefined') {
-          this.categoriesObj[capCategory] = { addedFocusTime: 0, goal: 300000, startDate: new Date() };      
+          const createdOn = Date.now();
+          this.categoriesObj[capCategory] = { 
+            addedFocusTime: 0,
+            goal: 300000,
+            startDate: {
+              date: createdOn,
+              year: getYear(createdOn),
+              month: getMonth(createdOn),
+              day: getDate(createdOn)
+            },
+            goalCompletion: 0 
+          };      
         }  
         // Hide wdw
         dynamicHTML.hideSetupWdw(e);
@@ -99,24 +110,7 @@ const taskInstances = {
     const firstCharUpper = str[0].toUpperCase();
     const capitalized = firstCharUpper + lower.slice(1);
     return capitalized;
-  },
-  resetDailyAddFocusTime() {
-    const date = new Date();
-    const now = date.getTime();
-    const endOfTheDay = endOfDay(date).getTime();
-    // ms left till end of the day
-    const timeLeft = endOfTheDay - now;  
-    
-    // Resets addedFocusTime values at the end of a day
-    // goal completion calculation to-do
-    setTimeout(() => {
-      // Get arr of keys for categoriesObj
-      const arrKeys = Object.keys(this.categoriesObj);
-      arrKeys.forEach(category => {
-        this.categoriesObj[category]['addedFocusTime'] = 0;
-      });    
-    }, timeLeft);
-  },
+  },  
   getTaskObjIndex(e) {      
     const tasks = document.querySelectorAll('.m-task');    
     const closestTask = e.target.closest('.m-task');    
@@ -275,8 +269,26 @@ const taskInstances = {
   },
   updateFocusTimeDB(obj) {
     this.catObjRef = doc(db, "users", this.userID, "goals", "categoriesObj");
+    const catKeyDot = obj.category + ".addedFocusTime";
     const currCategory = this.categoriesObj[obj.category];
-    updateDoc(this.catObjRef, { [obj.category]: { "addedFocusTime": currCategory.addedFocusTime, "goal": currCategory.goal }});      
+    updateDoc(this.catObjRef, { [catKeyDot]: currCategory.addedFocusTime });
+  },
+  dailyReset() {
+    const date = new Date();
+    const now = date.getTime();
+    const endOfTheDay = endOfDay(date).getTime();
+    // ms left till end of the day
+    const timeLeft = endOfTheDay - now;  
+    
+    // Resets addedFocusTime values at the end of a day
+    // goal completion calculation to-do
+    setTimeout(() => {
+      // Get arr of keys for categoriesObj
+      const arrKeys = Object.keys(this.categoriesObj);
+      arrKeys.forEach(category => {
+        this.categoriesObj[category]['addedFocusTime'] = 0;
+      });    
+    }, timeLeft);
   }
 }
 taskInstances.init();

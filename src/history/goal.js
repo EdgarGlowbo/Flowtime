@@ -3,10 +3,9 @@ import { initializeApp } from "firebase/app";
 import { 
     getFirestore, collection,
     doc, getDoc, updateDoc,
-    deleteField
+    deleteField, setDoc
   } 
 from "firebase/firestore";
-
 import { getAuth, signInAnonymously } from "firebase/auth";
 
 const firebaseConfig = {
@@ -25,13 +24,14 @@ const history = {
   init() {
     this.createUserDoc();
     this.queryDOM();
-    this.bindEvents();
+    this.bindEvents();    
     
   },
   queryDOM() {
     this.categoryPanel = document.querySelector('.l-container__category-panel');
     this.categoryBtn = this.categoryPanel.querySelector('.c-switch-category__category');
     this.dailyGoalInput = this.categoryPanel.querySelector('.c-switch-category__input');
+    this.daysOfMonth = calendar.daysContainer.querySelectorAll('.c-cal__day'); // console log it to make sure is nodeList
   },
   bindEvents() {
     this.categoryPanel.addEventListener('click', function(e) {
@@ -50,7 +50,7 @@ const history = {
     }
     this.categories = Object.keys(this.categoriesObj);
     this.showCategory(); // updates category btn to show first category
-    this.calcGoalCompletion();
+    this.calcGoalCompletion(); // sets the current day status
   },
   createUserDoc() {
     signInAnonymously(auth)
@@ -78,7 +78,8 @@ const history = {
     }
     this.showCategory(this.i);         
   },
-  showCategory(i = 0) {    
+  showCategory(i = 0) {
+    
     if (typeof this.categories[i] !== 'undefined') {
       const chosenCategory = this.categories[i];
       const goal = this.categoriesObj[chosenCategory].goal;
@@ -86,36 +87,79 @@ const history = {
       this.dailyGoalInput.value = (goal / 60000); 
     } else {
       this.categoryBtn.textContent = 'No category';    
-      this.dailyGoalInput.value = 0; 
+      this.dailyGoalInput.value = 0;       
     }    
   },
-  updateGoal() {
-    const currCategory = this.categoriesObj[this.categories[this.i]]; // Access to current category (key) displayed from categoriesObj
+  async updateGoal() {
+    const catKey = this.categories[this.i];
+    const currCategory = this.categoriesObj[catKey]; // Access to current category (key) displayed from categoriesObj
     currCategory.goal = (this.dailyGoalInput.value) * 60000;
-    // updateDoc(this.catObjRef, { [this.categories[this.i]]: { "addedFocusTime": currCategory.addedFocusTime, "goal": currCategory.goal }});
-    // updateDoc(this.catObjRef, {[this.categories[this.i]]["goal"]: currCategory.goal}); 
-    console.log(currCategory);
+    const catGoalDot = catKey + ".goal";  // String to access nested goal field in catKey                             
+    updateDoc(this.catObjRef, { [catGoalDot]: currCategory.goal });  // Square brackets so its value (string) is used, not the var name itself    
   },
-  async deleteCategory(e) {
+  deleteCategory(e) {
     if (e.target.classList.contains('c-delete-category-btn')) {
       const categoryKey = this.categories[this.i];      
-      this.categories.splice(this.i); // deletes element from categories array (display tag)
+      this.categories.splice(this.i, 1); // deletes element from categories array (display tag)      
       delete this.categoriesObj[categoryKey]; // deletes property from categoriesObj ()
       const docRef = doc(db, "users", this.userID, "goals", "categoriesObj");
-      await updateDoc(docRef, {
+      updateDoc(docRef, {
         [categoryKey]: deleteField() // deletes from db
       })
       this.showCategory(); // displays first category or no category
     }
   },
-  calcGoalCompletion() {
+  async calcGoalCompletion() { 
+    if (typeof this.categories[this.i] !== 'undefined') {
+      const currCategory = this.categoriesObj[this.categories[this.i]]; // Access to current category (key) displayed from categoriesObj 
+  
+      const goal = currCategory.goal;
+      const focusTime = currCategory.addedFocusTime;
+      currCategory.goalCompletion = focusTime / goal;
+      const date = new Date();
+      const dateAsString = date.getDate().toString();            
+      
+      const docRef = doc(db, "users", this.userID, "goals", "progress", this.categories[this.i], dateAsString);
+      console.log(docRef);
+      // doc name is today's date (1, 2... 15, 31)
+      await setDoc(docRef, {
+        goal: goal,
+        addedFocusTime: focusTime,
+        goalCompletion: currCategory.goalCompletion,
+        date: date
+      });
+                  
+      this.setDayStatus(currCategory);           
+    }    
+  },
+  dayStatusFromDB() {
+
     
-    const currCategory = this.categoriesObj[this.categories[this.i]]; // Access to current category (key) displayed from categoriesObj
-    console.log(currCategory);
-    const goal = currCategory.goal;
-    const focusTime = currCategory.addedFocusTime;
-    const quotient = focusTime / goal;
-    console.log(focusTime, " / ", goal, " = ", quotient);
+  },
+  setDayStatus(currCategory) {    
+    const goalStat = currCategory.goalCompletion;
+    console.log(this.daysOfMonth);
+    let index = 0;
+    
+    // If month visited is before the startDate.month then index is 0 and the processing stops at the end of the month
+    // Only sets index different to 0 if startDate month is equal to displayedMonth.
+    
+    
+    if (goalStat >= 1) {
+      this.daysOfMonth[0].classList.add('.c-cal__day--one '); // Unsure of index
+    } else if (goalStat >= (5/6)) {
+
+    } else if (goalStat >= (4/6)) {
+
+    } else if (goalStat >= (3/6)) {
+
+    } else if (goalStat >= (2/6)) {
+
+    } else if (goalStat >= (1/6)) {
+
+    } else {
+
+    }
   }
 }
 

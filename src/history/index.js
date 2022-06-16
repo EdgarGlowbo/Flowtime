@@ -1,5 +1,5 @@
 import "../styles/style.scss";
-import { format, getDay } from 'date-fns';
+import { format, getDay, getMonth } from 'date-fns';
 
 
 const calendar = {
@@ -17,7 +17,7 @@ const calendar = {
     "November",
     "December"
   ],
-  date: new Date(),
+  date: new Date(),  
   init() {
     this.queryDOM();
     this.bindEvents();
@@ -36,7 +36,8 @@ const calendar = {
   displayMonth() {
     const year = this.date.getFullYear();
     const monthIndex = this.date.getMonth();
-    this.monthHeader.textContent = this.monthsArr[monthIndex] + " " + year;    
+    this.monthHeader.textContent = this.monthsArr[monthIndex] + " " + year;
+    this.displayedMonth = monthIndex; // date of the current month
   },
   displayCurrentDate () {
     const todayDate = new Date();
@@ -92,10 +93,14 @@ const calendar = {
   switchMonth(e) {
     const elementClasses = e.target.classList;
     if (elementClasses.contains('c-cal__arrow-right') || elementClasses.contains('c-icon__arrow-right')) {  
-      this.date.setMonth(this.date.getMonth() + 1);       
+      const nextMonth = this.date.setMonth(this.date.getMonth() + 1);       
+      this.displayedMonth = getMonth(nextMonth);
+      console.log(this.date);
       this.renderCal();
     } else if (elementClasses.contains('c-cal__arrow-left') || elementClasses.contains('c-icon__arrow-left')) {
-      this.date.setMonth(this.date.getMonth() - 1);      
+      const prevMonth = this.date.setMonth(this.date.getMonth() - 1);      
+      this.displayedMonth = getMonth(prevMonth);      
+      console.log(this.date);
       this.renderCal();
     }
   }
