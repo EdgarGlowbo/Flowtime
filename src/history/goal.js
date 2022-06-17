@@ -3,10 +3,11 @@ import { initializeApp } from "firebase/app";
 import { 
     getFirestore, collection,
     doc, getDoc, updateDoc,
-    deleteField, setDoc
+    arrayRemove
   } 
 from "firebase/firestore";
 import { getAuth, signInAnonymously } from "firebase/auth";
+import { getYear, getMonth, getDate } from "date-fns"
 
 const firebaseConfig = {
   apiKey: "AIzaSyCwUJfVaRIommAPOtOH1_1ki8v7PzjDKqE",
@@ -41,16 +42,17 @@ const history = {
     this.dailyGoalInput.addEventListener('keyup', this.updateGoal.bind(this));
   },
   async retrieveCategoriesDB() {
-    this.catObjRef = doc(db, "users", this.userID, "goals", "categoriesObj");
-    const docSnap = await getDoc(this.catObjRef);
+    this.progressDocRef = doc(db, "users", this.userID, "goals", "progress");
+    const docSnap = await getDoc(this.progressDocRef);
     if (docSnap.exists()) {
-      this.categoriesObj = JSON.parse(JSON.stringify(docSnap.data()));
-    } else {      
-      console.log("No such document!");
+      // sets this.categories to the array of categories keys in db
+      this.categories = docSnap.data().categories;      
+    } else {
+      console.log("No such document");
     }
-    this.categories = Object.keys(this.categoriesObj);
-    this.showCategory(); // updates category btn to show first category
+    
     this.calcGoalCompletion(); // sets the current day status
+    this.showCategory(); // updates category btn to show first category
   },
   createUserDoc() {
     signInAnonymously(auth)
@@ -78,58 +80,55 @@ const history = {
     }
     this.showCategory(this.i);         
   },
-  showCategory(i = 0) {
+  async showCategory(i = 0) {
     
     if (typeof this.categories[i] !== 'undefined') {
       const chosenCategory = this.categories[i];
-      const goal = this.categoriesObj[chosenCategory].goal;
-      this.categoryBtn.textContent = chosenCategory;    
-      this.dailyGoalInput.value = (goal / 60000); 
+      const docSnap = await getDoc(this.dailyDocRef);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        const goal = data.goal;
+        this.categoryBtn.textContent = chosenCategory;    
+        this.dailyGoalInput.value = (goal / 60000); 
+      }           
     } else {
       this.categoryBtn.textContent = 'No category';    
       this.dailyGoalInput.value = 0;       
     }    
   },
-  async updateGoal() {
-    const catKey = this.categories[this.i];
-    const currCategory = this.categoriesObj[catKey]; // Access to current category (key) displayed from categoriesObj
-    currCategory.goal = (this.dailyGoalInput.value) * 60000;
-    const catGoalDot = catKey + ".goal";  // String to access nested goal field in catKey                             
-    updateDoc(this.catObjRef, { [catGoalDot]: currCategory.goal });  // Square brackets so its value (string) is used, not the var name itself    
+  async updateGoal() {    
+    // updates goal field in daily doc on keyup event (multiplies by 60000 to ms)     
+    await updateDoc(this.dailyDocRef, { "goal": (this.dailyGoalInput.value) * 60000 });
   },
-  deleteCategory(e) {
+  async deleteCategory(e) {
+    
     if (e.target.classList.contains('c-delete-category-btn')) {
+      const progressDocRef = doc(db, "users", this.userID, "goals", "progress");
+      const catColRef = collection(db, "users", this.userID, "goals", "progress", this.categories[this.i]);
       const categoryKey = this.categories[this.i];      
-      this.categories.splice(this.i, 1); // deletes element from categories array (display tag)      
-      delete this.categoriesObj[categoryKey]; // deletes property from categoriesObj ()
-      const docRef = doc(db, "users", this.userID, "goals", "categoriesObj");
-      updateDoc(docRef, {
-        [categoryKey]: deleteField() // deletes from db
-      })
+      this.categories.splice(this.i, 1); // deletes element from categories array (display tag)                  
+      // delete category string from categories array in DB
+      await updateDoc(progressDocRef, { "categories": arrayRemove(categoryKey) });
+      // delete category collection from db
+     
       this.showCategory(); // displays first category or no category
     }
   },
   async calcGoalCompletion() { 
-    if (typeof this.categories[this.i] !== 'undefined') {
-      const currCategory = this.categoriesObj[this.categories[this.i]]; // Access to current category (key) displayed from categoriesObj 
-  
-      const goal = currCategory.goal;
-      const focusTime = currCategory.addedFocusTime;
-      currCategory.goalCompletion = focusTime / goal;
+    if (typeof this.categories[this.i] !== 'undefined') {      
       const date = new Date();
-      const dateAsString = date.getDate().toString();            
-      
-      const docRef = doc(db, "users", this.userID, "goals", "progress", this.categories[this.i], dateAsString);
-      console.log(docRef);
-      // doc name is today's date (1, 2... 15, 31)
-      await setDoc(docRef, {
-        goal: goal,
-        addedFocusTime: focusTime,
-        goalCompletion: currCategory.goalCompletion,
-        date: date
-      });
-                  
-      this.setDayStatus(currCategory);           
+      const dateAsString = date.getDate().toString();  // doc name is today's date (1, 2... 15, 31)
+      this.dailyDocRef = doc(db, "users", this.userID, "goals", "progress", this.categories[this.i], dateAsString);  
+      const docSnap = await getDoc(this.dailyDocRef);
+      // goalCompletion is calculated and updated to DB
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        const goal = data.goal;
+        const focusTime = data.addedFocusTime;
+        const goalCompletion = focusTime / goal;
+        await updateDoc(this.dailyDocRef, { "goalCompletion": goalCompletion });
+      }                      
+      // this.setDayStatus(currCategory);           
     }    
   },
   dayStatusFromDB() {

@@ -1,6 +1,6 @@
 import 'regenerator-runtime/runtime';
 import "../styles/style.scss";
-import { endOfDay, getYear, getMonth, getDate } from 'date-fns';
+import { getYear, getMonth, getDate } from 'date-fns';
 import { dynamicHTML } from "./app.js";
 import { Task } from "./task.js";
 
@@ -8,8 +8,7 @@ import { initializeApp } from "firebase/app";
 import { 
     getFirestore, collection, addDoc,
     deleteDoc, doc, getDoc, getDocs,
-    setDoc,
-    updateDoc,    
+    setDoc, updateDoc, increment, arrayUnion,    
   } 
 from "firebase/firestore";
 import { getAuth, signInAnonymously } from "firebase/auth";
@@ -38,8 +37,7 @@ const taskInstances = {
   init() {
     this.queryDOM();
     this.bindEvents();    
-    this.createUserDoc();
-    this.dailyReset();
+    this.createUserDoc();    
     this.breakCountdown(localStorage.getItem('then'), localStorage.getItem('breakDuration'));
   },
   bindEvents() {
@@ -77,21 +75,8 @@ const taskInstances = {
         // Clear red borders
         this.taskNameInput.classList.remove('c-input-field--border-red');
         this.taskCategoryInput.classList.remove('c-input-field--border-red');
-        // sets property to categoriesObj
-        if (typeof this.categoriesObj[capCategory] === 'undefined') {
-          const createdOn = Date.now();
-          this.categoriesObj[capCategory] = { 
-            addedFocusTime: 0,
-            goal: 300000,
-            startDate: {
-              date: createdOn,
-              year: getYear(createdOn),
-              month: getMonth(createdOn),
-              day: getDate(createdOn)
-            },
-            goalCompletion: 0 
-          };      
-        }  
+
+        this.updateFocusTimeDB(taskObj);  
         // Hide wdw
         dynamicHTML.hideSetupWdw(e);
       } else {
@@ -149,8 +134,7 @@ const taskInstances = {
         obj.isActive = true;        
       } else {
         clearInterval(this.intervalID);        
-        countUpElement.innerHTML = '00:00';        
-        this.categoriesObj[obj.category]['addedFocusTime'] += this.focusTime;
+        countUpElement.innerHTML = '00:00';                
         this.updateFocusTimeDB(obj);
         obj.isActive = false;  
       }               
@@ -208,9 +192,7 @@ const taskInstances = {
   },
   async taskToDB(obj) {
     const docRef = await addDoc(this.tasksColRef, JSON.parse(JSON.stringify(obj)));
-    const docSnap = await getDoc(docRef);
-    // Saves categoriesObj every addTask event
-    await setDoc(doc(db, "users", this.userID, "goals", "categoriesObj"), this.categoriesObj);
+    const docSnap = await getDoc(docRef);    
     if (docSnap.exists()) {
       obj.id = docSnap.id;
     } else {      
@@ -221,14 +203,7 @@ const taskInstances = {
     const querySnapshot = await getDocs(this.tasksColRef);
       querySnapshot.forEach((doc) => {             
         this.addTaskFromDB(doc.data(), doc.id);
-      });
-    // Sets categoriesObj equal to the one in db
-    const docSnap = await getDoc(doc(db, "users", this.userID, "goals", "categoriesObj"));
-    if (docSnap.exists()) {
-      this.categoriesObj = JSON.parse(JSON.stringify(docSnap.data()));
-    } else {      
-      console.log("No such document!");
-    } 
+      });   
   },
   addTaskFromDB(taskData, docID) {
     // Creates task template      
@@ -267,28 +242,32 @@ const taskInstances = {
       }  
     }, 200);      
   },
-  updateFocusTimeDB(obj) {
-    this.catObjRef = doc(db, "users", this.userID, "goals", "categoriesObj");
-    const catKeyDot = obj.category + ".addedFocusTime";
-    const currCategory = this.categoriesObj[obj.category];
-    updateDoc(this.catObjRef, { [catKeyDot]: currCategory.addedFocusTime });
-  },
-  dailyReset() {
+  async updateFocusTimeDB(obj) {
     const date = new Date();
-    const now = date.getTime();
-    const endOfTheDay = endOfDay(date).getTime();
-    // ms left till end of the day
-    const timeLeft = endOfTheDay - now;  
+    const dateAsString = date.getDate().toString();  // doc name is today's date (1, 2... 15, 31)
+    const dailyDocRef = doc(db, "users", this.userID, "goals", "progress", obj.category, dateAsString);
+    const progressDocRef = doc(db, "users", this.userID, "goals", "progress");
+    const docSnap = await getDoc(dailyDocRef);
+
+    if (docSnap.exists()) {
+      await updateDoc(dailyDocRef, { addedFocusTime: increment(this.focusTime) });
+    } else {
+      // Creates new category doc in progress/goals collection
+      await setDoc(dailyDocRef, {
+        goal: 300000,
+        addedFocusTime: 0,
+        goalCompletion: 0,
+        date: {
+          year: getYear(date),
+          month: getMonth(date),
+          day: getDate(date)
+        }
+      });
+      // Adds new category key to categories progress doc field
+      await updateDoc(progressDocRef, { "categories": arrayUnion(obj.category) });
+
+    }      
     
-    // Resets addedFocusTime values at the end of a day
-    // goal completion calculation to-do
-    setTimeout(() => {
-      // Get arr of keys for categoriesObj
-      const arrKeys = Object.keys(this.categoriesObj);
-      arrKeys.forEach(category => {
-        this.categoriesObj[category]['addedFocusTime'] = 0;
-      });    
-    }, timeLeft);
   }
 }
 taskInstances.init();

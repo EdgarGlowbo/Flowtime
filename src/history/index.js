@@ -94,13 +94,11 @@ const calendar = {
     const elementClasses = e.target.classList;
     if (elementClasses.contains('c-cal__arrow-right') || elementClasses.contains('c-icon__arrow-right')) {  
       const nextMonth = this.date.setMonth(this.date.getMonth() + 1);       
-      this.displayedMonth = getMonth(nextMonth);
-      console.log(this.date);
+      this.displayedMonth = getMonth(nextMonth);      
       this.renderCal();
     } else if (elementClasses.contains('c-cal__arrow-left') || elementClasses.contains('c-icon__arrow-left')) {
       const prevMonth = this.date.setMonth(this.date.getMonth() - 1);      
       this.displayedMonth = getMonth(prevMonth);      
-      console.log(this.date);
       this.renderCal();
     }
   }
