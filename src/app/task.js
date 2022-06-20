@@ -42,6 +42,5 @@ class Task {
     }    
   }  
 }
-const categoriesObj = new Object();
 
-export { Task, categoriesObj }
+export { Task }

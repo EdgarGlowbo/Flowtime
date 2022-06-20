@@ -15,24 +15,28 @@
       <span class="c-text__span c-text__span--font-color-secondary c-current-break-text">Current break:</span>
       <span class="c-text__span js-count-down c-text__span--font-color-secondary c-current-break">00:00</span>
     </div>
-    <div class="l-container__switch-category">
-      <button class="c-btn c-switch-category__btn"><img src="../assets/angulo-pequeno-izquierdo.svg" alt="flecha izquierda" class="c-icon__arrow-left c-icon__arrow"></button>
-      <div class="c-category c-switch-category__category">Coding</div>
-      <div class="o-daily-goal">
-        <span class="c-text c-label c-label--secondary-color">Daily goal (min):</span>
-        <input type="number" class="c-switch-category__input c-input-field" placeholder="minutes" value="5" min="5">
-      </div>      
-      <button class="c-btn c-switch-category__btn"><img src="../assets/angulo-pequeno-derecho.svg" alt="flecha derecha" class="c-icon__arrow-right c-icon__arrow"></button>
+    <div class="l-container__category-panel">
+      <div class="l-container__switch-category">      
+        <button class="c-btn c-switch-category__btn c-switch-category__btn-left"><img src="../assets/angulo-pequeno-izquierdo.svg" alt="flecha izquierda" class="c-switch-category__btn-left c-switch-category__btn c-icon__arrow-left c-icon__arrow"></button>
+        <div class="c-category c-switch-category__category"></div>
+        <div class="o-daily-goal">
+          <span class="c-text c-label c-label--secondary-color">Daily goal (min):</span>
+          <input inputmode="numeric" class="c-switch-category__input c-input-field">
+        </div>      
+        <button class="c-btn c-switch-category__btn c-switch-category__btn-right"><img src="../assets/angulo-pequeno-derecho.svg" alt="flecha derecha" class="c-icon__arrow-right c-icon__arrow c-switch-category__btn c-switch-category__btn-right"></button>                         
+      </div>
+      <div class="c-btn c-btn--no-margin c-delete-category-btn"><img src="../assets/circulo-cruzado.svg" alt="delete button" class="c-delete-category-btn"></div>
     </div>
+        
     <div class="l-container__calendar m-cal">
       <div class="o-cal__header">
-        <button class="c-btn c-cal__arrow-left c-cal__btn"><img src="../assets/angulo-pequeno-izquierdo.svg" alt="flecha izquierda" class="c-icon__arrow-left c-icon__arrow c-cal__arrow"></button>
+        <button class="c-btn c-cal__arrow-left c-cal__btn"><img src="../assets/angulo-pequeno-izquierdo.svg" alt="flecha izquierda" class="c-cal__arrow c-icon__arrow-left c-icon__arrow c-cal__arrow-left"></button>
         <div class="o-date">
           <h2 class="c-month c-text__h2"></h2>
           <h3 class="c-current-date c-text__h3"></h3>
         </div>         
-        <button class="c-btn c-cal__arrow-right c-cal__btn"><img src="../assets/angulo-pequeno-derecho.svg" alt="flecha derecha" class="c-icon__arrow-right c-icon__arrow c-cal__arrow"></button>
-      </div>
+        <button class="c-btn c-cal__arrow-right c-cal__btn"><img src="../assets/angulo-pequeno-derecho.svg" alt="flecha derecha" class="c-cal__arrow c-icon__arrow-right c-icon__arrow c-cal__arrow-right"></button>
+      </div>      
       <div class="o-week o-cal__weekdays">
         <span class="c-week__day c-text__span c-text__span--font-color-secondary">Sun</span>
         <span class="c-week__day c-text__span c-text__span--font-color-secondary">Mon</span>
@@ -44,7 +48,8 @@
       </div>
       <div class="o-day-numbers o-cal__days"></div>       
     </div>
-  </div>   
+  </div>
+  <script src="goal.js"></script>   
   <script src="history.js"></script>  
 </body>
 </html>

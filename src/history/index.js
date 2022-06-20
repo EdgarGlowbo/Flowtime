@@ -1,5 +1,9 @@
 import "../styles/style.scss";
-import { format, getDay } from 'date-fns';
+import 
+{ 
+  format, getDay, getMonth,
+  getYear
+} from 'date-fns';
 
 const calendar = {
   monthsArr: [
@@ -16,26 +20,24 @@ const calendar = {
     "November",
     "December"
   ],
-  date: new Date(),
+  date: new Date(),  
   init() {
-    this.queryDOM();
-    this.bindEvents();
-    this.renderCal();
+    this.queryDOM();    
+    this.renderCal();    
   },  
   queryDOM() {
     this.calContainer = document.querySelector('.m-cal');
     this.calHeader = this.calContainer.querySelector('.o-cal__header');
     this.currDate = this.calHeader.querySelector('.c-current-date');
     this.monthHeader = this.calHeader.querySelector('.c-month');
-    this.daysContainer = this.calContainer.querySelector('.o-cal__days');
-  },
-  bindEvents() {
-    this.calContainer.addEventListener('click', this.switchMonth.bind(this));
+    this.daysContainer = this.calContainer.querySelector('.o-cal__days');  
   },
   displayMonth() {
     const year = this.date.getFullYear();
     const monthIndex = this.date.getMonth();
-    this.monthHeader.textContent = this.monthsArr[monthIndex] + " " + year;    
+    this.monthHeader.textContent = this.monthsArr[monthIndex] + " " + year;
+    this.displayedMonth = monthIndex; // date of the current month
+    this.displayedYear = year; // date of the current year
   },
   displayCurrentDate () {
     const todayDate = new Date();
@@ -87,17 +89,9 @@ const calendar = {
     this.displayMonth();
     this.displayCurrentDate();
     this.displayMonthDays();
-  },
-  switchMonth(e) {
-    const elementClasses = e.target.classList;
-    if (elementClasses.contains('c-cal__arrow-right') || elementClasses.contains('c-icon__arrow-right')) {  
-      this.date.setMonth(this.date.getMonth() + 1);       
-      this.renderCal();
-    } else if (elementClasses.contains('c-cal__arrow-left') || elementClasses.contains('c-icon__arrow-left')) {
-      this.date.setMonth(this.date.getMonth() - 1);      
-      this.renderCal();
-    }
-  }
+  }    
 }
 
 calendar.init();
+
+export { calendar }
