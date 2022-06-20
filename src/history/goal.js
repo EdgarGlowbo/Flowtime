@@ -32,7 +32,10 @@ const history = {
   queryDOM() {
     this.categoryPanel = document.querySelector('.l-container__category-panel');
     this.categoryBtn = this.categoryPanel.querySelector('.c-switch-category__category');
-    this.dailyGoalInput = this.categoryPanel.querySelector('.c-switch-category__input');    
+    this.dailyGoalInput = this.categoryPanel.querySelector('.c-switch-category__input');
+    this.daysOfMonth = calendar.daysContainer.getElementsByClassName('c-cal__day');
+    this.daysPrevMonth = calendar.daysContainer.querySelectorAll('.c-prev-date');
+    this.daysNextMonth = calendar.daysContainer.querySelectorAll('.c-next-date');    
   },
   bindEvents() {
     this.categoryPanel.addEventListener('click', function(e) {
@@ -140,8 +143,39 @@ const history = {
               
       }
       this.showCategory(this.i); // updates category btn to show first category 
-      calendar.setDayStatus();           
+      this.setDayStatus();           
     }    
+  },
+  async setDayStatus() {            
+    let prevMonthLength = this.daysPrevMonth.length; // To even the nodeList indexes with the days in DB
+    this.catColRef = collection(db, "users", this.userID, "goals", "progress", this.categories[this.i]);    
+    const month = calendar.displayedMonth;
+    const year = calendar.displayedYear;    
+    const q = query(this.catColRef, where("month", "==", month), where("year", "==", year));
+    const querySnapshot = await getDocs(q);    
+    querySnapshot.forEach((doc) => {
+      // -1 because is 0 based + index to ignore the prevDays
+      const data = doc.data();
+      const index = (data.day - 1) + prevMonthLength;
+      const goalStat = data.goalCompletion;
+      
+      if (goalStat >= 1) {
+        this.daysOfMonth[index].classList.add('c-cal__day--one'); 
+      } else if (goalStat >= (5/6)) {
+        this.daysOfMonth[index].classList.add('c-cal__day--two'); 
+      } else if (goalStat >= (4/6)) {
+        this.daysOfMonth[index].classList.add('c-cal__day--three'); 
+      } else if (goalStat >= (3/6)) {
+        this.daysOfMonth[index].classList.add('c-cal__day--four'); 
+      } else if (goalStat >= (2/6)) {
+        this.daysOfMonth[index].classList.add('c-cal__day--five'); 
+      } else if (goalStat >= (1/6)) {
+        this.daysOfMonth[index].classList.add('c-cal__day--six'); 
+      } else {
+        this.daysOfMonth[index].classList.add('c-cal__day--six');      
+      }
+      
+    });    
   }
 }
 
