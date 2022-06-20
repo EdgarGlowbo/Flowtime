@@ -40,8 +40,9 @@ const history = {
   bindEvents() {
     this.categoryPanel.addEventListener('click', function(e) {
       this.switchCategory(e);
-      this.deleteCategory(e);
+      this.deleteCategory(e);      
     }.bind(this));
+    calendar.calHeader.addEventListener('click', this.switchMonth.bind(this))
     this.dailyGoalInput.addEventListener('keyup', this.updateGoal.bind(this));
   },
   async retrieveCategoriesDB() {
@@ -176,6 +177,24 @@ const history = {
       }
       
     });    
+  },
+  switchMonth(e) {
+    const elementClasses = e.target.classList;
+    if (elementClasses.contains('c-cal__arrow-right') || elementClasses.contains('c-icon__arrow-right')) {  
+      const nextMonth = calendar.date.setMonth(calendar.date.getMonth() + 1);      
+      console.log(nextMonth);
+      calendar.displayedMonth = getMonth(nextMonth);
+      calendar.displayedYear = getYear(nextMonth);       
+      calendar.renderCal();
+      this.setDayStatus();
+    } else if (elementClasses.contains('c-cal__arrow-left') || elementClasses.contains('c-icon__arrow-left')) {
+      const prevMonth = calendar.date.setMonth(calendar.date.getMonth() - 1);      
+      console.log(prevMonth);
+      calendar.displayedMonth = getMonth(prevMonth);
+      calendar.displayedYear = getYear(prevMonth);      
+      calendar.renderCal();
+      this.setDayStatus();
+    }
   }
 }
 

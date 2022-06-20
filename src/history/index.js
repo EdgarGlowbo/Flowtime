@@ -22,8 +22,7 @@ const calendar = {
   ],
   date: new Date(),  
   init() {
-    this.queryDOM();
-    this.bindEvents();
+    this.queryDOM();    
     this.renderCal();    
   },  
   queryDOM() {
@@ -32,9 +31,6 @@ const calendar = {
     this.currDate = this.calHeader.querySelector('.c-current-date');
     this.monthHeader = this.calHeader.querySelector('.c-month');
     this.daysContainer = this.calContainer.querySelector('.o-cal__days');  
-  },
-  bindEvents() {
-    this.calContainer.addEventListener('click', this.switchMonth.bind(this));
   },
   displayMonth() {
     const year = this.date.getFullYear();
@@ -93,21 +89,7 @@ const calendar = {
     this.displayMonth();
     this.displayCurrentDate();
     this.displayMonthDays();
-  },
-  switchMonth(e) {
-    const elementClasses = e.target.classList;
-    if (elementClasses.contains('c-cal__arrow-right') || elementClasses.contains('c-icon__arrow-right')) {  
-      const nextMonth = this.date.setMonth(this.date.getMonth() + 1);       
-      this.displayedMonth = getMonth(nextMonth);
-      this.displayedYear = getYear(nextMonth);       
-      this.renderCal();
-    } else if (elementClasses.contains('c-cal__arrow-left') || elementClasses.contains('c-icon__arrow-left')) {
-      const prevMonth = this.date.setMonth(this.date.getMonth() - 1);      
-      this.displayedMonth = getMonth(prevMonth);
-      this.displayedYear = getYear(prevMonth);      
-      this.renderCal();
-    }
-  }  
+  }    
 }
 
 calendar.init();
