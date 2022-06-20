@@ -1,6 +1,9 @@
 import 'regenerator-runtime/runtime';
 import "../styles/style.scss";
-import { getYear, getMonth, getDate } from 'date-fns';
+import 
+{ getYear, getMonth, getDate, 
+  format
+} from 'date-fns';
 import { dynamicHTML } from "./app.js";
 import { Task } from "./task.js";
 
@@ -244,7 +247,7 @@ const taskInstances = {
   },
   async updateFocusTimeDB(obj) {
     const date = new Date();
-    const dateAsString = date.getDate().toString();  // doc name is today's date (1, 2... 15, 31)
+    const dateAsString = format(date, "ddMMyyyy"); // doc's name (id)  
     const dailyDocRef = doc(db, "users", this.userID, "goals", "progress", obj.category, dateAsString);
     const progressDocRef = doc(db, "users", this.userID, "goals", "progress");
     const docSnap = await getDoc(dailyDocRef);
@@ -252,16 +255,15 @@ const taskInstances = {
     if (docSnap.exists()) {
       await updateDoc(dailyDocRef, { addedFocusTime: increment(this.focusTime) });
     } else {
-      // Creates new category doc in progress/goals collection
+      // Creates new category doc in progress/goals collection when task is added
       await setDoc(dailyDocRef, {
         goal: 300000,
         addedFocusTime: 0,
-        goalCompletion: 0,
-        date: {
-          year: getYear(date),
-          month: getMonth(date),
-          day: getDate(date)
-        }
+        goalCompletion: 0,      
+        year: getYear(date),
+        month: getMonth(date),
+        day: getDate(date)
+        
       });
       // Adds new category key to categories progress doc field
       await updateDoc(progressDocRef, { "categories": arrayUnion(obj.category) });

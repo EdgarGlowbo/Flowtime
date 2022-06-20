@@ -1,5 +1,9 @@
 import "../styles/style.scss";
-import { format, getDay, getMonth } from 'date-fns';
+import 
+{ 
+  format, getDay, getMonth,
+  getYear, collection
+} from 'date-fns';
 
 
 const calendar = {
@@ -29,6 +33,9 @@ const calendar = {
     this.currDate = this.calHeader.querySelector('.c-current-date');
     this.monthHeader = this.calHeader.querySelector('.c-month');
     this.daysContainer = this.calContainer.querySelector('.o-cal__days');
+    this.daysOfMonth = this.daysContainer.getElementsByClassName('c-cal__day');
+    this.daysPrevMonth = this.daysContainer.querySelectorAll('.c-prev-date');
+    this.daysNextMonth = this.daysContainer.querySelectorAll('.c-next-date');
   },
   bindEvents() {
     this.calContainer.addEventListener('click', this.switchMonth.bind(this));
@@ -38,6 +45,7 @@ const calendar = {
     const monthIndex = this.date.getMonth();
     this.monthHeader.textContent = this.monthsArr[monthIndex] + " " + year;
     this.displayedMonth = monthIndex; // date of the current month
+    this.displayedYear = year; // date of the current year
   },
   displayCurrentDate () {
     const todayDate = new Date();
@@ -94,13 +102,46 @@ const calendar = {
     const elementClasses = e.target.classList;
     if (elementClasses.contains('c-cal__arrow-right') || elementClasses.contains('c-icon__arrow-right')) {  
       const nextMonth = this.date.setMonth(this.date.getMonth() + 1);       
-      this.displayedMonth = getMonth(nextMonth);      
+      this.displayedMonth = getMonth(nextMonth);
+      this.displayedYear = getYear(nextMonth);       
       this.renderCal();
     } else if (elementClasses.contains('c-cal__arrow-left') || elementClasses.contains('c-icon__arrow-left')) {
       const prevMonth = this.date.setMonth(this.date.getMonth() - 1);      
-      this.displayedMonth = getMonth(prevMonth);      
+      this.displayedMonth = getMonth(prevMonth);
+      this.displayedYear = getYear(prevMonth);      
       this.renderCal();
     }
+  },
+  async setDayStatus() {            
+    let prevMonthLength = this.daysPrevMonth.length; // To even the nodeList indexes with the days in DB
+    this.catColRef = collection(db, "users", this.userID, "goals", "progress", this.categories[this.i]);    
+    const month = this.displayedMonth;
+    const year = this.displayedYear;    
+    const q = query(this.catColRef, where("month", "==", month), where("year", "==", year));
+    const querySnapshot = await getDocs(q);    
+    querySnapshot.forEach((doc) => {
+      // -1 because is 0 based + index to ignore the prevDays
+      const data = doc.data();
+      const index = (data.day - 1) + prevMonthLength;
+      const goalStat = data.goalCompletion;
+      
+      if (goalStat >= 1) {
+        this.daysOfMonth[index].classList.add('c-cal__day--one'); 
+      } else if (goalStat >= (5/6)) {
+        this.daysOfMonth[index].classList.add('c-cal__day--two'); 
+      } else if (goalStat >= (4/6)) {
+        this.daysOfMonth[index].classList.add('c-cal__day--three'); 
+      } else if (goalStat >= (3/6)) {
+        this.daysOfMonth[index].classList.add('c-cal__day--four'); 
+      } else if (goalStat >= (2/6)) {
+        this.daysOfMonth[index].classList.add('c-cal__day--five'); 
+      } else if (goalStat >= (1/6)) {
+        this.daysOfMonth[index].classList.add('c-cal__day--six'); 
+      } else {
+        this.daysOfMonth[index].classList.add('c-cal__day--six');      
+      }
+      
+    });    
   }
 }
 

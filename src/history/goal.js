@@ -3,11 +3,12 @@ import { initializeApp } from "firebase/app";
 import { 
     getFirestore, collection,
     doc, getDoc, updateDoc,
-    arrayRemove
+    arrayRemove, setDoc, query,
+    where, getDocs, orderBy
   } 
 from "firebase/firestore";
 import { getAuth, signInAnonymously } from "firebase/auth";
-import { getYear, getMonth, getDate } from "date-fns"
+import { getYear, getMonth, getDate, format } from "date-fns"
 
 const firebaseConfig = {
   apiKey: "AIzaSyCwUJfVaRIommAPOtOH1_1ki8v7PzjDKqE",
@@ -31,8 +32,7 @@ const history = {
   queryDOM() {
     this.categoryPanel = document.querySelector('.l-container__category-panel');
     this.categoryBtn = this.categoryPanel.querySelector('.c-switch-category__category');
-    this.dailyGoalInput = this.categoryPanel.querySelector('.c-switch-category__input');
-    this.daysOfMonth = calendar.daysContainer.querySelectorAll('.c-cal__day'); // console log it to make sure is nodeList
+    this.dailyGoalInput = this.categoryPanel.querySelector('.c-switch-category__input');    
   },
   bindEvents() {
     this.categoryPanel.addEventListener('click', function(e) {
@@ -52,7 +52,7 @@ const history = {
     }
     
     this.calcGoalCompletion(); // sets the current day status
-    this.showCategory(); // updates category btn to show first category
+    
   },
   createUserDoc() {
     signInAnonymously(auth)
@@ -78,7 +78,7 @@ const history = {
       this.i--;
       if (this.i < 0) { this.i = this.categories.length - 1 }  
     }
-    this.showCategory(this.i);         
+    this.calcGoalCompletion();            
   },
   async showCategory(i = 0) {
     
@@ -104,7 +104,7 @@ const history = {
     
     if (e.target.classList.contains('c-delete-category-btn')) {
       const progressDocRef = doc(db, "users", this.userID, "goals", "progress");
-      const catColRef = collection(db, "users", this.userID, "goals", "progress", this.categories[this.i]);
+      
       const categoryKey = this.categories[this.i];      
       this.categories.splice(this.i, 1); // deletes element from categories array (display tag)                  
       // delete category string from categories array in DB
@@ -117,7 +117,7 @@ const history = {
   async calcGoalCompletion() { 
     if (typeof this.categories[this.i] !== 'undefined') {      
       const date = new Date();
-      const dateAsString = date.getDate().toString();  // doc name is today's date (1, 2... 15, 31)
+      const dateAsString = format(date, "ddMMyyyy"); // doc's name (id)       
       this.dailyDocRef = doc(db, "users", this.userID, "goals", "progress", this.categories[this.i], dateAsString);  
       const docSnap = await getDoc(this.dailyDocRef);
       // goalCompletion is calculated and updated to DB
@@ -127,38 +127,21 @@ const history = {
         const focusTime = data.addedFocusTime;
         const goalCompletion = focusTime / goal;
         await updateDoc(this.dailyDocRef, { "goalCompletion": goalCompletion });
-      }                      
-      // this.setDayStatus(currCategory);           
+      } else {
+        // Creates new category doc in progress/goals collection
+        await setDoc(this.dailyDocRef, {
+          goal: 300000,
+          addedFocusTime: 0,
+          goalCompletion: 0,        
+          year: getYear(date),
+          month: getMonth(date),
+          day: getDate(date)          
+        });
+              
+      }
+      this.showCategory(this.i); // updates category btn to show first category 
+      calendar.setDayStatus();           
     }    
-  },
-  dayStatusFromDB() {
-
-    
-  },
-  setDayStatus(currCategory) {    
-    const goalStat = currCategory.goalCompletion;
-    console.log(this.daysOfMonth);
-    let index = 0;
-    
-    // If month visited is before the startDate.month then index is 0 and the processing stops at the end of the month
-    // Only sets index different to 0 if startDate month is equal to displayedMonth.
-    
-    
-    if (goalStat >= 1) {
-      this.daysOfMonth[0].classList.add('.c-cal__day--one '); // Unsure of index
-    } else if (goalStat >= (5/6)) {
-
-    } else if (goalStat >= (4/6)) {
-
-    } else if (goalStat >= (3/6)) {
-
-    } else if (goalStat >= (2/6)) {
-
-    } else if (goalStat >= (1/6)) {
-
-    } else {
-
-    }
   }
 }
 
