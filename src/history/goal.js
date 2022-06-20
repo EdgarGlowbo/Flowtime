@@ -4,7 +4,7 @@ import {
     getFirestore, collection,
     doc, getDoc, updateDoc,
     arrayRemove, setDoc, query,
-    where, getDocs, orderBy
+    where, getDocs
   } 
 from "firebase/firestore";
 import { getAuth, signInAnonymously } from "firebase/auth";
@@ -181,15 +181,13 @@ const history = {
   switchMonth(e) {
     const elementClasses = e.target.classList;
     if (elementClasses.contains('c-cal__arrow-right') || elementClasses.contains('c-icon__arrow-right')) {  
-      const nextMonth = calendar.date.setMonth(calendar.date.getMonth() + 1);      
-      console.log(nextMonth);
+      const nextMonth = calendar.date.setMonth(calendar.date.getMonth() + 1);            
       calendar.displayedMonth = getMonth(nextMonth);
       calendar.displayedYear = getYear(nextMonth);       
       calendar.renderCal();
       this.setDayStatus();
     } else if (elementClasses.contains('c-cal__arrow-left') || elementClasses.contains('c-icon__arrow-left')) {
-      const prevMonth = calendar.date.setMonth(calendar.date.getMonth() - 1);      
-      console.log(prevMonth);
+      const prevMonth = calendar.date.setMonth(calendar.date.getMonth() - 1);          
       calendar.displayedMonth = getMonth(prevMonth);
       calendar.displayedYear = getYear(prevMonth);      
       calendar.renderCal();
