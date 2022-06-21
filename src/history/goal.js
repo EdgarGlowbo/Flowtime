@@ -47,12 +47,14 @@ const history = {
   },
   async retrieveCategoriesDB() {
     this.progressDocRef = doc(db, "users", this.userID, "goals", "progress");
+
     const docSnap = await getDoc(this.progressDocRef);
     if (docSnap.exists()) {
       // sets this.categories to the array of categories keys in db
       this.categories = docSnap.data().categories;      
     } else {
-      console.log("No such document");
+      setDoc(this.progressDocRef, { categories: [] });
+      this.categories = [];
     }
     
     this.calcGoalCompletion(); // sets the current day status
