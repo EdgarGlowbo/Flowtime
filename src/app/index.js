@@ -248,13 +248,13 @@ const taskInstances = {
   async updateFocusTimeDB(obj) {
     const date = new Date();
     const dateAsString = format(date, "ddMMyyyy"); // doc's name (id)  
-    const dailyDocRef = doc(db, "users", this.userID, "goals", "progress", obj.category, dateAsString);
-    const progressDocRef = doc(db, "users", this.userID, "goals", "progress");
+    const dailyDocRef = doc(db, "users", this.userID, "goals", "progress", obj.category, dateAsString);    
     const docSnap = await getDoc(dailyDocRef);
-
+    
     if (docSnap.exists()) {
-      await updateDoc(dailyDocRef, { addedFocusTime: increment(this.focusTime) });
-    } else {
+      // Updates focusTime if doc already exists at stop count up
+      await updateDoc(dailyDocRef, { addedFocusTime: increment(this.focusTime) });      
+    } else { 
       // Creates new category doc in progress/goals collection when task is added
       await setDoc(dailyDocRef, {
         goal: 300000,
@@ -266,10 +266,21 @@ const taskInstances = {
         
       });
       // Adds new category key to categories progress doc field
+      this.updateCategories(obj);
+    }          
+  },
+  async updateCategories(obj) {            
+    const progressDocRef = doc(db, "users", this.userID, "goals", "progress");
+    const docSnap = await getDoc(progressDocRef);    
+    if (docSnap.exists()) {            
+      // Adds category string to arr in progress doc if it exists
       await updateDoc(progressDocRef, { "categories": arrayUnion(obj.category) });
-
-    }      
-    
+    } else {
+      // If progress doc doesn't exists
+      await setDoc(progressDocRef, {
+        categories: [ obj.category ]
+      });            
+    }          
   }
 }
 taskInstances.init();
