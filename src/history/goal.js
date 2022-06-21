@@ -4,7 +4,7 @@ import {
     getFirestore, collection,
     doc, getDoc, updateDoc,
     arrayRemove, setDoc, query,
-    where, getDocs
+    where, getDocs, deleteDoc
   } 
 from "firebase/firestore";
 import { getAuth, signInAnonymously } from "firebase/auth";
@@ -86,8 +86,7 @@ const history = {
     }
     this.calcGoalCompletion();            
   },
-  async showCategory(i = 0) {
-    
+  async showCategory(i = 0) {    
     if (typeof this.categories[i] !== 'undefined') {
       const chosenCategory = this.categories[i];
       const docSnap = await getDoc(this.dailyDocRef);
@@ -106,18 +105,19 @@ const history = {
     // updates goal field in daily doc on keyup event (multiplies by 60000 to ms)     
     await updateDoc(this.dailyDocRef, { "goal": (this.dailyGoalInput.value) * 60000 });
   },
-  async deleteCategory(e) {
-    
-    if (e.target.classList.contains('c-delete-category-btn')) {
-      const progressDocRef = doc(db, "users", this.userID, "goals", "progress");
-      
+  async deleteCategory(e) {    
+    if (e.target.classList.contains('c-delete-category-btn')) {            
       const categoryKey = this.categories[this.i];      
       this.categories.splice(this.i, 1); // deletes element from categories array (display tag)                  
       // delete category string from categories array in DB
-      await updateDoc(progressDocRef, { "categories": arrayRemove(categoryKey) });
+      await updateDoc(this.progressDocRef, { "categories": arrayRemove(categoryKey) });
       // delete category collection from db
-     
-      this.showCategory(); // displays first category or no category
+      const q = query(this.catColRef);
+      const querySnap = await getDocs(q);
+      querySnap.forEach(async doc => {        
+        await deleteDoc(doc.ref);
+      });                
+      this.calcGoalCompletion(); // displays first category or no category
     }
   },
   async calcGoalCompletion() { 
@@ -144,41 +144,41 @@ const history = {
           day: getDate(date)          
         });
               
-      }
-      this.showCategory(this.i); // updates category btn to show first category 
+      }      
       this.setDayStatus();           
-    }    
+    } 
+    this.showCategory(this.i); // updates category btn to show first category    
   },
-  async setDayStatus() {            
-    let prevMonthLength = this.daysPrevMonth.length; // To even the nodeList indexes with the days in DB
-    this.catColRef = collection(db, "users", this.userID, "goals", "progress", this.categories[this.i]);    
-    const month = calendar.displayedMonth;
-    const year = calendar.displayedYear;    
-    const q = query(this.catColRef, where("month", "==", month), where("year", "==", year));
-    const querySnapshot = await getDocs(q);    
-    querySnapshot.forEach((doc) => {
-      // -1 because is 0 based + index to ignore the prevDays
-      const data = doc.data();
-      const index = (data.day - 1) + prevMonthLength;
-      const goalStat = data.goalCompletion;
-      
-      if (goalStat >= 1) {
-        this.daysOfMonth[index].classList.add('c-cal__day--one'); 
-      } else if (goalStat >= (5/6)) {
-        this.daysOfMonth[index].classList.add('c-cal__day--two'); 
-      } else if (goalStat >= (4/6)) {
-        this.daysOfMonth[index].classList.add('c-cal__day--three'); 
-      } else if (goalStat >= (3/6)) {
-        this.daysOfMonth[index].classList.add('c-cal__day--four'); 
-      } else if (goalStat >= (2/6)) {
-        this.daysOfMonth[index].classList.add('c-cal__day--five'); 
-      } else if (goalStat >= (1/6)) {
-        this.daysOfMonth[index].classList.add('c-cal__day--six'); 
-      } else {
-        this.daysOfMonth[index].classList.add('c-cal__day--six');      
-      }
-      
-    });    
+  async setDayStatus() {
+    if (typeof this.categories[this.i] !== 'undefined') {
+      let prevMonthLength = this.daysPrevMonth.length; // To even the nodeList indexes with the days in DB
+      this.catColRef = collection(db, "users", this.userID, "goals", "progress", this.categories[this.i]);    
+      const month = calendar.displayedMonth;
+      const year = calendar.displayedYear;    
+      const q = query(this.catColRef, where("month", "==", month), where("year", "==", year));
+      const querySnapshot = await getDocs(q);    
+      querySnapshot.forEach((doc) => {
+        // -1 because is 0 based + index to ignore the prevDays
+        const data = doc.data();
+        const index = (data.day - 1) + prevMonthLength;
+        const goalStat = data.goalCompletion;      
+        if (goalStat >= 1) {        
+          this.daysOfMonth[index].classList.value = 'c-cal__day c-cal__day--one';        
+        } else if (goalStat >= (5/6)) {        
+          this.daysOfMonth[index].classList.value = 'c-cal__day c-cal__day--two';        
+        } else if (goalStat >= (4/6)) {        
+          this.daysOfMonth[index].classList.value = 'c-cal__day c-cal__day--three';                         
+        } else if (goalStat >= (3/6)) {        
+          this.daysOfMonth[index].classList.value = 'c-cal__day c-cal__day--four';                
+        } else if (goalStat >= (2/6)) {        
+          this.daysOfMonth[index].classList.value = 'c-cal__day c-cal__day--five';      
+        } else if (goalStat >= (1/6)) {        
+          this.daysOfMonth[index].classList.value = 'c-cal__day c-cal__day--six';         
+        } else {        
+          this.daysOfMonth[index].classList.value = 'c-cal__day c-cal__day--six';        
+        }            
+      });   
+    }               
   },
   switchMonth(e) {
     const elementClasses = e.target.classList;
