@@ -145,14 +145,31 @@ const history = {
         });
               
       }      
-      this.setDayStatus();           
-    } 
+            
+    }
+    this.setDayStatus();
     this.showCategory(this.i); // updates category btn to show first category    
   },
   async setDayStatus() {
-    if (typeof this.categories[this.i] !== 'undefined') {
-      let prevMonthLength = this.daysPrevMonth.length; // To even the nodeList indexes with the days in DB
-      this.catColRef = collection(db, "users", this.userID, "goals", "progress", this.categories[this.i]);    
+    const dayStatus = [
+      'c-cal__day--one',
+      'c-cal__day--two',
+      'c-cal__day--three',
+      'c-cal__day--four',
+      'c-cal__day--five',
+      'c-cal__day--six'
+    ]
+    const prevMonthLength = this.daysPrevMonth.length; // To even the nodeList indexes with the days in DB
+    // substracts nextMonth length to daysOfmonth length to get last day index (stop for loop)
+    const endMonthIndex = this.daysOfMonth.length - this.daysNextMonth.length; 
+    // Iterates through each c-cal__day element and removes all of the status classes
+    for (let i = prevMonthLength; i < endMonthIndex; i++) {
+      dayStatus.forEach(status => {
+        this.daysOfMonth[i].classList.remove(status);
+      }); 
+    } 
+    if (typeof this.categories[this.i] !== 'undefined') {      
+      this.catColRef = collection(db, "users", this.userID, "goals", "progress", this.categories[this.i]);                                        
       const month = calendar.displayedMonth;
       const year = calendar.displayedYear;    
       const q = query(this.catColRef, where("month", "==", month), where("year", "==", year));
@@ -161,22 +178,30 @@ const history = {
         // -1 because is 0 based + index to ignore the prevDays
         const data = doc.data();
         const index = (data.day - 1) + prevMonthLength;
-        const goalStat = data.goalCompletion;      
-        if (goalStat >= 1) {        
-          this.daysOfMonth[index].classList.value = 'c-cal__day c-cal__day--one';        
-        } else if (goalStat >= (5/6)) {        
-          this.daysOfMonth[index].classList.value = 'c-cal__day c-cal__day--two';        
+        const goalStat = data.goalCompletion;
+        let statusIndex;      
+        if (goalStat >= 1) {
+          statusIndex = 0;          
+          this.daysOfMonth[index].classList.value = 'c-cal__day ' + dayStatus[statusIndex];                  
+        } else if (goalStat >= (5/6)) { 
+          statusIndex = 1;       
+          this.daysOfMonth[index].classList.value = 'c-cal__day ' + dayStatus[statusIndex];        
         } else if (goalStat >= (4/6)) {        
-          this.daysOfMonth[index].classList.value = 'c-cal__day c-cal__day--three';                         
+          statusIndex = 2;
+          this.daysOfMonth[index].classList.value = 'c-cal__day ' + dayStatus[statusIndex];                         
         } else if (goalStat >= (3/6)) {        
-          this.daysOfMonth[index].classList.value = 'c-cal__day c-cal__day--four';                
+          statusIndex = 3;
+          this.daysOfMonth[index].classList.value = 'c-cal__day ' + dayStatus[statusIndex];                
         } else if (goalStat >= (2/6)) {        
-          this.daysOfMonth[index].classList.value = 'c-cal__day c-cal__day--five';      
+          statusIndex = 4;
+          this.daysOfMonth[index].classList.value = 'c-cal__day ' + dayStatus[statusIndex];      
         } else if (goalStat >= (1/6)) {        
-          this.daysOfMonth[index].classList.value = 'c-cal__day c-cal__day--six';         
-        } else {        
-          this.daysOfMonth[index].classList.value = 'c-cal__day c-cal__day--six';        
-        }            
+          statusIndex = 5;
+          this.daysOfMonth[index].classList.value = 'c-cal__day ' + dayStatus[statusIndex];         
+        } else if (goalStat < (1/6)) {        
+          statusIndex = 5;
+          this.daysOfMonth[index].classList.value = 'c-cal__day ' + dayStatus[statusIndex];               
+        }
       });   
     }               
   },
