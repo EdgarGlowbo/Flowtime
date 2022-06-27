@@ -1,8 +1,7 @@
 import "../styles/style.scss";
 import 
 { 
-  format, getDay, getMonth,
-  getYear
+  format, getDay
 } from 'date-fns';
 
 const calendar = {

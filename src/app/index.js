@@ -78,7 +78,6 @@ const taskInstances = {
         // Clear red borders
         this.taskNameInput.classList.remove('c-input-field--border-red');
         this.taskCategoryInput.classList.remove('c-input-field--border-red');
-
         this.updateFocusTimeDB(taskObj);  
         // Hide wdw
         dynamicHTML.hideSetupWdw(e);
