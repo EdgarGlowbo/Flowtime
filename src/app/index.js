@@ -117,7 +117,11 @@ const taskInstances = {
       let [s, m, h] = [0, 0, 0];             
       const countUpElement = parentElement.querySelector('.c-task__count-up');
       if (!obj.isActive) {
-        clearInterval(this.intervalID);      
+        clearInterval(this.intervalID);
+        // Reset focusTime at start task
+        this.focusTime = 0;
+        // If task already exists but not daily doc then it creates it with addFocusTime = 0, then in stop event it increases it
+        this.updateFocusTimeDB(obj);      
         const countUpStart = new Date().getTime();
         this.intervalID = setInterval(() => {
           const countUpCurrent = new Date().getTime();          
@@ -137,7 +141,7 @@ const taskInstances = {
       } else {
         clearInterval(this.intervalID);        
         countUpElement.innerHTML = '00:00';                
-        this.updateFocusTimeDB(obj);
+        this.updateFocusTimeDB(obj); 
         obj.isActive = false;  
       }               
     }              
